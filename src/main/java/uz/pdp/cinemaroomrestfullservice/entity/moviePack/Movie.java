@@ -30,10 +30,10 @@ public class Movie extends AbsEntity {
     private Attachment trailerVideo;
 
     @ManyToMany
-    private List<Director> directorList = new ArrayList<>();
+    private List<Director> directors = new ArrayList<>();
 
     @ManyToMany()
-    private List<Genre> genreList = new ArrayList<>();
+    private List<Genre> genres = new ArrayList<>();
 
     private double minPrice;
 

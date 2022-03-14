@@ -21,5 +21,5 @@ public class Role extends AbsEntity {
     private String name;
 
     @ManyToMany
-    private List<Permission> permissionList = new ArrayList<>();
+    private List<Permission> permissions = new ArrayList<>();
 }

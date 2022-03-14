@@ -8,6 +8,7 @@ import uz.pdp.cinemaroomrestfullservice.entity.template.AbsEntity;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,9 @@ public class Movie extends AbsEntity {
 
     @ManyToMany
     private List<Director> directors = new ArrayList<>();
+
+    @OneToMany
+    private List<Attachment> photos;
 
     @ManyToMany()
     private List<Genre> genres = new ArrayList<>();

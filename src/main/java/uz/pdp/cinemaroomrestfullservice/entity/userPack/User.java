@@ -27,10 +27,10 @@ public class User extends AbsEntity {
     private Gender gender;
 
     @ManyToMany
-    private List<Role> roleList = new ArrayList<>();
+    private List<Role> roles = new ArrayList<>();
 
     @ManyToMany
-    private List<Permission> permissionList = new ArrayList<>();
+    private List<Permission> permissions = new ArrayList<>();
 
 
 

@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import uz.pdp.cinemaroomrestfullservice.entity.cinemaPack.Hall;
 import uz.pdp.cinemaroomrestfullservice.entity.moviePack.*;
+import uz.pdp.cinemaroomrestfullservice.repository.cinemaRelatedRepositories.HallRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.movieRelatedRepositories.*;
 
 import java.util.ArrayList;
@@ -28,6 +30,8 @@ public class DataLoader implements CommandLineRunner {
     AttachmentRepository attachmentRepository;
     @Autowired
     AttachmentContentRepository attachmentContentRepository;
+    @Autowired
+    HallRepository hallRepository;
 
 
     @Override
@@ -61,6 +65,12 @@ public class DataLoader implements CommandLineRunner {
                 50000, distributor1, 5
         ));
 
-        System.out.println(movie1.getId());
+
+        hallRepository.save(new Hall("Zal 1", 0));
+        hallRepository.save(new Hall("Zal 2", 0));
+        hallRepository.save(new Hall("Zal 3", 0));
+        hallRepository.save(new Hall("Vip Zal", 10));
+
+
     }
 }

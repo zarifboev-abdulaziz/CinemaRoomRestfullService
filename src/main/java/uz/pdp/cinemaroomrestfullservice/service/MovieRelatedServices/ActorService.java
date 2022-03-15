@@ -2,6 +2,7 @@ package uz.pdp.cinemaroomrestfullservice.service.MovieRelatedServices;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import uz.pdp.cinemaroomrestfullservice.entity.moviePack.Actor;
 import uz.pdp.cinemaroomrestfullservice.entity.moviePack.Attachment;
@@ -19,24 +20,18 @@ public class ActorService {
     AttachmentService attachmentService;
 
 
-    public ApiResponse saveActor(MultipartHttpServletRequest request) {
-        Actor actor = new Actor();
-        actor.setFullName(request.getParameter("fullName"));
-        ApiResponse apiResponse = attachmentService.uploadFile(request);
-        if (!apiResponse.isSuccess()) {
-            return new ApiResponse("Failed to save file embedded to Actor", false);
-        }
-        List<Attachment> attachments = (List<Attachment>) apiResponse.getObject();
-        if (attachments.size()==0) {
-            return new ApiResponse("No Files Uploaded to Actor", false);
+    public ApiResponse saveActor(MultipartFile file, Actor actor) {
+        Attachment attachment = attachmentService.uploadFile(file);
+        if (attachment == null){
+            return new ApiResponse("Failed to upload File", false);
         }
 
-        actor.setPhoto(attachments.get(0));
+        actor.setPhoto(attachment);
         Actor savedActor = actorRepository.save(actor);
         return new ApiResponse("Actor Successfully Saved", true, savedActor);
     }
 
-    public ApiResponse editActor(Actor actor, Long actorId, MultipartHttpServletRequest request) {
+    public ApiResponse editActor(Actor actor, Long actorId, MultipartFile file) {
         Optional<Actor> optionalActor = actorRepository.findById(actorId);
         if (!optionalActor.isPresent()) {
             return new ApiResponse("Actor not found", false);
@@ -45,17 +40,9 @@ public class ActorService {
         Actor editingActor = optionalActor.get();
         editingActor.setFullName(actor.getFullName());
 
-        attachmentService.uploadFile(request);
-        ApiResponse apiResponse = attachmentService.uploadFile(request);
-        if (!apiResponse.isSuccess()) {
-            return new ApiResponse("Failed to save file embedded to Actor", false);
-        }
-        List<Attachment> attachments = (List<Attachment>) apiResponse.getObject();
-        if (attachments.size()==0) {
-            return new ApiResponse("No Files Uploaded to Actor", false);
-        }
+        Attachment attachment = attachmentService.uploadFile(file);
 
-        editingActor.setPhoto(attachments.get(0));
+        editingActor.setPhoto(attachment);
         Actor savedActor = actorRepository.save(editingActor);
         return new ApiResponse("Actor Successfully edited", true, savedActor);
     }

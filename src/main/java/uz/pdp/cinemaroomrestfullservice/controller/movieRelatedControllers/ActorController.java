@@ -5,13 +5,21 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import uz.pdp.cinemaroomrestfullservice.entity.moviePack.Actor;
+import uz.pdp.cinemaroomrestfullservice.entity.moviePack.Attachment;
+import uz.pdp.cinemaroomrestfullservice.entity.moviePack.AttachmentContent;
 import uz.pdp.cinemaroomrestfullservice.payload.ApiResponse;
 import uz.pdp.cinemaroomrestfullservice.repository.movieRelatedRepositories.ActorRepository;
+import uz.pdp.cinemaroomrestfullservice.repository.movieRelatedRepositories.AttachmentContentRepository;
 import uz.pdp.cinemaroomrestfullservice.service.MovieRelatedServices.ActorService;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -21,6 +29,8 @@ public class ActorController {
     ActorRepository actorRepository;
     @Autowired
     ActorService actorService;
+    @Autowired
+    AttachmentContentRepository attachmentContentRepository;
 
 
     @GetMapping
@@ -30,9 +40,8 @@ public class ActorController {
     }
 
     @GetMapping("/{id}")
-    public HttpEntity<?> getOneActor(@PathVariable Long id) {
+    public HttpEntity<?> getOneActor(@PathVariable Long id, HttpServletResponse response) throws IOException {
         Optional<Actor> optionalActor = actorRepository.findById(id);
-
         Actor actor = optionalActor.orElse(null);
         return ResponseEntity.status(actor != null ? 200 : 404).body(actor);
     }
@@ -48,14 +57,14 @@ public class ActorController {
     }
 
     @PostMapping
-    public HttpEntity<?> saveActor(MultipartHttpServletRequest request){
-        ApiResponse apiResponse = actorService.saveActor(request);
+    public HttpEntity<?> saveActor(@RequestPart(name = "file") MultipartFile multipartFile, @RequestPart(name = "json") Actor actor){
+        ApiResponse apiResponse = actorService.saveActor(multipartFile, actor);
         return ResponseEntity.status(apiResponse.isSuccess() ? 201 : 409).body(apiResponse);
     }
 
-    @PutMapping("/id")
-    public HttpEntity<?> editActor(@RequestBody Actor actor, @PathVariable Long id, MultipartHttpServletRequest request){
-        ApiResponse apiResponse = actorService.editActor(actor, id, request);
+    @PutMapping("/{id}")
+    public HttpEntity<?> editActor(@PathVariable Long id, @RequestPart(name = "json") Actor actor, @RequestPart(name = "file") MultipartFile multipartFile){
+        ApiResponse apiResponse = actorService.editActor(actor, id, multipartFile);
         return ResponseEntity.status(apiResponse.isSuccess() ? 202 : 409).body(apiResponse);
     }
 

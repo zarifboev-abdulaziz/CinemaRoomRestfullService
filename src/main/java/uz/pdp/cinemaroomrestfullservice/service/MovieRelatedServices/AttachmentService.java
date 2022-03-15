@@ -50,4 +50,22 @@ public class AttachmentService {
         return new ApiResponse("Files Saved to Database", true, attachmentList);
     }
 
+    @SneakyThrows
+    public Attachment uploadFile(MultipartFile file){
+        Attachment attachment = new Attachment();
+        attachment.setContentType(file.getContentType());
+        attachment.setOriginalName(file.getOriginalFilename());
+        attachment.setSize(file.getSize());
+        Attachment savedAttachment = attachmentRepository.save(attachment);
+
+        AttachmentContent attachmentContent = new AttachmentContent();
+        attachmentContent.setBytes(file.getBytes());
+        attachmentContent.setAttachment(savedAttachment);
+        attachmentContentRepository.save(attachmentContent);
+
+        return savedAttachment;
+    }
+
+
+
 }

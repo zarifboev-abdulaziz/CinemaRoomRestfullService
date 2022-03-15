@@ -21,9 +21,6 @@ public class MovieSession extends AbsEntity {
     @ManyToOne
     private Movie movie;
 
-    @ManyToOne
-    private Hall hall;
-
     private boolean active;
 
 

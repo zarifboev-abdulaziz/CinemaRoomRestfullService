@@ -4,12 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import uz.pdp.cinemaroomrestfullservice.entity.template.AbsEntity;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,30 +17,30 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "movies")
+@OnDelete(action = OnDeleteAction.CASCADE)
 public class Movie extends AbsEntity {
 
     private String title;
     private String description;
     private int durationMinutes;
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.MERGE})
     private Attachment coverImage;
 
-    @OneToOne
-    private Attachment trailerVideo;
+    private String trailerVideoUrl;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.MERGE)
     private List<Director> directors = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.MERGE)
     private List<Attachment> photos;
 
-    @ManyToMany()
+    @ManyToMany(cascade = CascadeType.MERGE)
     private List<Genre> genres = new ArrayList<>();
 
     private double minPrice;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.MERGE)
     private Distributor distributor;
 
     private double distributorSharePercentage;

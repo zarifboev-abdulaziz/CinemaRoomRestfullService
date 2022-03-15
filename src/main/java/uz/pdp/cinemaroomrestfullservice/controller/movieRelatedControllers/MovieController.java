@@ -30,8 +30,8 @@ public class MovieController {
 
 
     @GetMapping
-    public HttpEntity<?> getAllMovies(@RequestParam(defaultValue = "0") Integer page) {
-        Pageable pageable = PageRequest.of(page, 10);
+    public HttpEntity<?> getAllMovies(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
+        Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.ok(movieRepository.findAll(pageable));
     }
 

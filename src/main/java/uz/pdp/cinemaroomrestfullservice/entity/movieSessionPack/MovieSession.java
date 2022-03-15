@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import uz.pdp.cinemaroomrestfullservice.entity.cinemaPack.Hall;
 import uz.pdp.cinemaroomrestfullservice.entity.moviePack.Movie;
 import uz.pdp.cinemaroomrestfullservice.entity.template.AbsEntity;
@@ -16,6 +18,7 @@ import javax.persistence.ManyToOne;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "movie_sessions")
+@OnDelete(action = OnDeleteAction.CASCADE)
 public class MovieSession extends AbsEntity {
 
     @ManyToOne

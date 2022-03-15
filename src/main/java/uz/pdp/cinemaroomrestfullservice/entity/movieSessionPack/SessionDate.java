@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import uz.pdp.cinemaroomrestfullservice.entity.template.AbsEntity;
 
 import javax.persistence.Entity;
@@ -15,6 +17,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "session_dates")
+@OnDelete(action = OnDeleteAction.CASCADE)
 public class SessionDate extends AbsEntity {
     @ManyToOne
     private SessionHall sessionHall;

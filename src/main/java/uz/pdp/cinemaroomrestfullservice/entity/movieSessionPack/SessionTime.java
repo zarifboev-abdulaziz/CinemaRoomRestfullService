@@ -20,8 +20,5 @@ import java.sql.Time;
 public class SessionTime extends AbsEntity {
     private Time time;
 
-    @ManyToOne
-    private SessionDate sessionDate;
-
 
 }

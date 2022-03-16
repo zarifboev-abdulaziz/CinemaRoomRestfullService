@@ -27,7 +27,7 @@ public class MovieService {
     @Autowired MovieRepository movieRepository;
 
 
-    @Transactional
+    @Transactional()
     public ApiResponse saveMovie(MovieFiles movieFiles, MovieDto movieDto) {
         Attachment coverImage = attachmentService.uploadFile(movieFiles.getCoverImage());
         List<Attachment> photos = new ArrayList<>();

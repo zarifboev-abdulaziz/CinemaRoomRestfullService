@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import uz.pdp.cinemaroomrestfullservice.entity.cinemaPack.Hall;
+import uz.pdp.cinemaroomrestfullservice.entity.moviePack.Movie;
 import uz.pdp.cinemaroomrestfullservice.entity.template.AbsEntity;
 
 import javax.persistence.Entity;
@@ -16,12 +16,16 @@ import javax.persistence.ManyToOne;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "session_halls")
+@Entity(name = "movie_sessions")
 @OnDelete(action = OnDeleteAction.CASCADE)
-public class SessionHall extends AbsEntity {
-    @ManyToOne
-    private MovieSession movieSession;
+public class Afisha extends AbsEntity {
 
     @ManyToOne
-    private Hall hall;
+    private Movie movie;
+
+    private boolean active;
+
+
+
+
 }

@@ -16,7 +16,7 @@ import javax.persistence.ManyToOne;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "movie_sessions")
+@Entity(name = "afishas")
 @OnDelete(action = OnDeleteAction.CASCADE)
 public class Afisha extends AbsEntity {
 

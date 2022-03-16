@@ -9,6 +9,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import uz.pdp.cinemaroomrestfullservice.entity.cinemaPack.Hall;
 import uz.pdp.cinemaroomrestfullservice.entity.template.AbsEntity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
@@ -19,19 +20,19 @@ import javax.persistence.ManyToOne;
 @Entity(name = "reserved_halls")
 @OnDelete(action = OnDeleteAction.CASCADE)
 public class ReservedHall extends AbsEntity {
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Afisha afisha;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Hall hall;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private SessionDate startDate;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private SessionTime startTime;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private SessionTime endTime;
 
 

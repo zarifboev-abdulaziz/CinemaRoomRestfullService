@@ -14,6 +14,7 @@ public abstract class AbsEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(updatable = false)
     @OrderBy
     @CreationTimestamp
     private Timestamp createdAt;

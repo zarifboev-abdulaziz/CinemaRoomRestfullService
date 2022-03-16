@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/movieSession")
+@RequestMapping("/api/afisha")
 public class AfishaController {
     @Autowired
     AfishaRepository afishaRepository;

@@ -8,9 +8,11 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import uz.pdp.cinemaroomrestfullservice.entity.template.AbsEntity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-import java.util.Date;
+import java.sql.Date;
+
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -19,6 +21,7 @@ import java.util.Date;
 @Entity(name = "session_dates")
 @OnDelete(action = OnDeleteAction.CASCADE)
 public class SessionDate extends AbsEntity {
+    @Column(columnDefinition = "date")
     private Date date;
 
 

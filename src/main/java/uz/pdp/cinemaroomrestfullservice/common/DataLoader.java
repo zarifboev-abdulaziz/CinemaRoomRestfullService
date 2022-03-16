@@ -1,16 +1,15 @@
 package uz.pdp.cinemaroomrestfullservice.common;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import uz.pdp.cinemaroomrestfullservice.entity.cinemaPack.Hall;
 import uz.pdp.cinemaroomrestfullservice.entity.moviePack.*;
-import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.MovieSession;
+import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.Afisha;
 import uz.pdp.cinemaroomrestfullservice.repository.cinemaRelatedRepositories.HallRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.movieRelatedRepositories.*;
-import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.MovieSessionRepository;
+import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.AfishaRepository;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +34,7 @@ public class DataLoader implements CommandLineRunner {
     @Autowired
     HallRepository hallRepository;
     @Autowired
-    MovieSessionRepository movieSessionRepository;
+    AfishaRepository afishaRepository;
 
 
     @Override
@@ -77,13 +76,23 @@ public class DataLoader implements CommandLineRunner {
         ));
 
 
-        hallRepository.save(new Hall("Zal 1", 0));
-        hallRepository.save(new Hall("Zal 2", 0));
-        hallRepository.save(new Hall("Zal 3", 0));
-        hallRepository.save(new Hall("Vip Zal", 10));
+        Hall hall1 = hallRepository.save(new Hall("Zal 1", 0));
+        Hall hall2 = hallRepository.save(new Hall("Zal 2", 0));
+        Hall hall3 = hallRepository.save(new Hall("Zal 3", 0));
+        Hall hall4 = hallRepository.save(new Hall("Vip Zal", 10));
 
-        movieSessionRepository.save(new MovieSession(movie1, true));
-        movieSessionRepository.save(new MovieSession(movie2, true));
+        Afisha afisha1 = afishaRepository.save(new Afisha(movie1, true));
+        Afisha afisha2 = afishaRepository.save(new Afisha(movie2, true));
+
+//        sessionHallRepository.save(new SessionHall(afisha1, hall1));
+//        sessionHallRepository.save(new SessionHall(afisha1, hall2));
+//        sessionHallRepository.save(new SessionHall(afisha1, hall3));
+//
+//        sessionHallRepository.save(new SessionHall(afisha2, hall2));
+//        sessionHallRepository.save(new SessionHall(afisha2, hall3));
+//        sessionHallRepository.save(new SessionHall(afisha2, hall4));
+
+
 
 
     }

@@ -29,6 +29,12 @@ public class MovieController {
     MovieService movieService;
 
 
+    @GetMapping("/dto")
+    public HttpEntity<?> getAllMoviesDto(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(movieRepository.getAllMoviesWithPage(pageable));
+    }
+
     @GetMapping
     public HttpEntity<?> getAllMovies(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
         Pageable pageable = PageRequest.of(page, size);

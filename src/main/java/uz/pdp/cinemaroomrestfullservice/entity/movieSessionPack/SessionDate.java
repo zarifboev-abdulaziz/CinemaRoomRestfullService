@@ -19,9 +19,6 @@ import java.util.Date;
 @Entity(name = "session_dates")
 @OnDelete(action = OnDeleteAction.CASCADE)
 public class SessionDate extends AbsEntity {
-    @ManyToOne
-    private SessionHall sessionHall;
-
     private Date date;
 
 

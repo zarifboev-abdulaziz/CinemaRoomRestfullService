@@ -8,5 +8,4 @@ public interface HallProjection {
     Long getId();
     String getName();
 
-
 }

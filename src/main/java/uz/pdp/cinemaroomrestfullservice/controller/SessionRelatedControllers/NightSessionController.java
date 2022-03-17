@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.NightSessionAddFee;
 import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.SessionDate;
-import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.SessionTime;
 import uz.pdp.cinemaroomrestfullservice.payload.ApiResponse;
 import uz.pdp.cinemaroomrestfullservice.payload.sessionRelatedPayloads.NightSessionDto;
 import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.NightSessionRepository;

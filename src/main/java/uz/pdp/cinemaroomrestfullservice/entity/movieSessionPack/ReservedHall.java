@@ -20,19 +20,19 @@ import javax.persistence.ManyToOne;
 @Entity(name = "reserved_halls")
 @OnDelete(action = OnDeleteAction.CASCADE)
 public class ReservedHall extends AbsEntity {
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Afisha afisha;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Hall hall;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private SessionDate startDate;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private SessionTime startTime;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private SessionTime endTime;
 
 

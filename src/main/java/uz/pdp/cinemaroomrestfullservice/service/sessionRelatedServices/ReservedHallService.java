@@ -18,6 +18,8 @@ import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.Se
 import javax.xml.crypto.Data;
 import java.sql.Date;
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Optional;
 
 @Service
@@ -48,7 +50,7 @@ public class ReservedHallService {
         Optional<SessionDate> optionalSessionDate = sessionDateRepository.findByDate(reservedHallDto.getStartDate());
         SessionDate startDate = new SessionDate();
         if (!optionalSessionDate.isPresent()){
-            Date date = reservedHallDto.getStartDate();
+            LocalDate date = reservedHallDto.getStartDate();
             startDate.setDate(date);
         } else {
             startDate = optionalSessionDate.get();
@@ -57,7 +59,7 @@ public class ReservedHallService {
         Optional<SessionTime> sessionStartTimeOptional = sessionTimeRepository.findByTime(reservedHallDto.getStartTime());
         SessionTime startTime = new SessionTime();
         if (!sessionStartTimeOptional.isPresent()){
-            Time time = reservedHallDto.getStartTime();
+            LocalTime time = reservedHallDto.getStartTime();
             startTime.setTime(time);
         } else {
             startTime = sessionStartTimeOptional.get();
@@ -66,7 +68,7 @@ public class ReservedHallService {
         Optional<SessionTime> sessionEndTimeOptional = sessionTimeRepository.findByTime(reservedHallDto.getEndTime());
         SessionTime endTime = new SessionTime();
         if (!sessionEndTimeOptional.isPresent()){
-            Time time = reservedHallDto.getEndTime();
+            LocalTime time = reservedHallDto.getEndTime();
             endTime.setTime(time);
         }else {
             endTime = sessionEndTimeOptional.get();

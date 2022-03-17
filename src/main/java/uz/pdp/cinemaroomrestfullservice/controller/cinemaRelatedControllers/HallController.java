@@ -61,16 +61,16 @@ public class HallController {
     @PostMapping
     public HttpEntity<?> saveHall(@RequestBody HallDto hallDto){
         ApiResponse apiResponse = hallService.saveHall(hallDto);
-
         return ResponseEntity.status(apiResponse.isSuccess() ? 201 : 409).body(apiResponse);
     }
 
     @PutMapping("/{id}")
     public HttpEntity<?> editHall(@PathVariable Long id, @RequestBody HallDto hallDto){
         ApiResponse apiResponse = hallService.editHall(id, hallDto);
-
         return ResponseEntity.status(apiResponse.isSuccess() ? 202 : 409).body(apiResponse);
     }
+
+
 
 
 }

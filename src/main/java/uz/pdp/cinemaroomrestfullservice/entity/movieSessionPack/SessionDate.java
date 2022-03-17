@@ -12,6 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import java.sql.Date;
+import java.time.LocalDate;
 
 
 @EqualsAndHashCode(callSuper = true)
@@ -22,7 +23,7 @@ import java.sql.Date;
 @OnDelete(action = OnDeleteAction.CASCADE)
 public class SessionDate extends AbsEntity {
     @Column(columnDefinition = "date")
-    private Date date;
+    private LocalDate date;
 
 
 }

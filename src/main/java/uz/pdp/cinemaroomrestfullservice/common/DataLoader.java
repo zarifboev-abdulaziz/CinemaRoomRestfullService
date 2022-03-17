@@ -7,12 +7,24 @@ import org.springframework.stereotype.Component;
 import uz.pdp.cinemaroomrestfullservice.entity.cinemaPack.Hall;
 import uz.pdp.cinemaroomrestfullservice.entity.moviePack.*;
 import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.Afisha;
+import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.ReservedHall;
+import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.SessionDate;
+import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.SessionTime;
 import uz.pdp.cinemaroomrestfullservice.repository.cinemaRelatedRepositories.HallRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.movieRelatedRepositories.*;
 import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.AfishaRepository;
+import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.ReservedHallRepository;
+import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.SessionDateRepository;
+import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.SessionTimeRepository;
 
+import javax.xml.crypto.Data;
+import java.sql.Date;
+import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 
 @Component
 public class DataLoader implements CommandLineRunner {
@@ -35,6 +47,12 @@ public class DataLoader implements CommandLineRunner {
     HallRepository hallRepository;
     @Autowired
     AfishaRepository afishaRepository;
+    @Autowired
+    ReservedHallRepository reservedHallRepository;
+    @Autowired
+    SessionDateRepository sessionDateRepository;
+    @Autowired
+    SessionTimeRepository sessionTimeRepository;
 
 
     @Override
@@ -84,15 +102,26 @@ public class DataLoader implements CommandLineRunner {
         Afisha afisha1 = afishaRepository.save(new Afisha(movie1, true));
         Afisha afisha2 = afishaRepository.save(new Afisha(movie2, true));
 
-//        sessionHallRepository.save(new SessionHall(afisha1, hall1));
-//        sessionHallRepository.save(new SessionHall(afisha1, hall2));
-//        sessionHallRepository.save(new SessionHall(afisha1, hall3));
+        SessionDate date1 = sessionDateRepository.save(new SessionDate( LocalDate.of(2022, 03, 17)));
+        SessionDate date2 = sessionDateRepository.save(new SessionDate(LocalDate.of(2022, 03, 18)));
+        SessionDate date3 = sessionDateRepository.save(new SessionDate(LocalDate.of(2022, 03, 19)));
+
+        SessionTime startTime = sessionTimeRepository.save(new SessionTime(LocalTime.of(10, 00, 00)));
+        SessionTime endTime = sessionTimeRepository.save(new SessionTime(LocalTime.of(12, 00, 00)));
+        SessionTime time = sessionTimeRepository.save(new SessionTime(LocalTime.of(14, 00, 00)));
+
+        reservedHallRepository.save(new ReservedHall(afisha1, hall1, date1, startTime, endTime)); //Batman 17 mart Zal 1 | 10:00
+        reservedHallRepository.save(new ReservedHall(afisha1, hall1, date1, endTime, time)); //Batman 17 mart Zal 1 | 12:00
+
+        reservedHallRepository.save(new ReservedHall(afisha1, hall2, date1, startTime, endTime)); //Batman 17 mart Zal 2
+        reservedHallRepository.save(new ReservedHall(afisha1, hall2, date1, endTime, time)); //Batman 17 mart Zal 2
+
+//        reservedHallRepository.save(new ReservedHall(afisha1, hall1, date2, startTime, endTime)); //Batman 18 mart Zal 1
+//        reservedHallRepository.save(new ReservedHall(afisha1, hall2, date2, startTime, endTime)); //Batman 18 mart Zal 2
+//        reservedHallRepository.save(new ReservedHall(afisha1, hall3, date2, startTime, endTime)); //Batman 18 mart Zal 2
 //
-//        sessionHallRepository.save(new SessionHall(afisha2, hall2));
-//        sessionHallRepository.save(new SessionHall(afisha2, hall3));
-//        sessionHallRepository.save(new SessionHall(afisha2, hall4));
-
-
+//        reservedHallRepository.save(new ReservedHall(afisha2, hall3, date3, startTime, endTime)); //Spiderman 19 mart Zal 3
+//        reservedHallRepository.save(new ReservedHall(afisha2, hall4, date3, startTime, endTime)); //Spiderman 19 mart Zal Vip
 
 
     }

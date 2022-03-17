@@ -28,9 +28,12 @@ public class AfishaController {
 
     @GetMapping("/dto")
     public HttpEntity<?> getAllAfishaDto(@RequestParam(defaultValue = "0") Integer page) {
-        List<String> allAfisha = afishaRepository.getAllAfisha();
-        Gson gson = new Gson();
-        return ResponseEntity.ok(gson.fromJson(allAfisha.toString(), new TypeToken<List<AfishaProjection>>(){}.getType()));
+
+        return ResponseEntity.status(200).body(afishaRepository.getAllAfishaDto(PageRequest.of(page, 10)));
+
+//        List<String> allAfisha = afishaRepository.getAllAfishaDto();
+//        Gson gson = new Gson();
+//        return ResponseEntity.ok(gson.fromJson(allAfisha.toString(), new TypeToken<List<AfishaProjection>>(){}.getType()));
     }
 
     @GetMapping

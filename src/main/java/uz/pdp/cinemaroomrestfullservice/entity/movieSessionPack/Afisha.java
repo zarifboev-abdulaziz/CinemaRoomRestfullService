@@ -9,8 +9,10 @@ import org.hibernate.annotations.OnDeleteAction;
 import uz.pdp.cinemaroomrestfullservice.entity.moviePack.Movie;
 import uz.pdp.cinemaroomrestfullservice.entity.template.AbsEntity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -20,7 +22,7 @@ import javax.persistence.ManyToOne;
 @OnDelete(action = OnDeleteAction.CASCADE)
 public class Afisha extends AbsEntity {
 
-    @ManyToOne
+    @OneToOne(cascade = CascadeType.MERGE)
     private Movie movie;
 
     private boolean active;

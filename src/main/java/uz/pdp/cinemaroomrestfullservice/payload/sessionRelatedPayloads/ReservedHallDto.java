@@ -11,6 +11,8 @@ import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.SessionTime;
 import javax.persistence.ManyToOne;
 import java.sql.Date;
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 
 @Data
@@ -22,11 +24,11 @@ public class ReservedHallDto {
     private Long afishaId;
     private Long hallId;
 
-    private Date startDate;
-    private Date endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
-    private Time startTime;
-    private Time endTime;
+    private LocalTime startTime;
+    private LocalTime endTime;
 
 
 }

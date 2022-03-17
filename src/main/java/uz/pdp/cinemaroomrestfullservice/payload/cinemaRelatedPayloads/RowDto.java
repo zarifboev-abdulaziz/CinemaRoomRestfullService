@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class RowSeat {
+public class RowDto {
     private Integer rowNumber;
     private Integer numberOfSeats;
 

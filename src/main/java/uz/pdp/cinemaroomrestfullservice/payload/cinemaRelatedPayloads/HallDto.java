@@ -15,6 +15,6 @@ public class HallDto {
     private double vipAdditionalFeePercentage;
     private Integer numberOfRows;
     private Integer fixedNumberOfSeatsForEachRow;
-    private List<RowSeat> rowSeats;
+    private List<RowDto> rowDtos;
 
 }

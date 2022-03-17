@@ -7,7 +7,7 @@ import uz.pdp.cinemaroomrestfullservice.entity.cinemaPack.Row;
 import uz.pdp.cinemaroomrestfullservice.entity.cinemaPack.Seat;
 import uz.pdp.cinemaroomrestfullservice.payload.ApiResponse;
 import uz.pdp.cinemaroomrestfullservice.payload.cinemaRelatedPayloads.HallDto;
-import uz.pdp.cinemaroomrestfullservice.payload.cinemaRelatedPayloads.RowSeat;
+import uz.pdp.cinemaroomrestfullservice.payload.cinemaRelatedPayloads.RowDto;
 import uz.pdp.cinemaroomrestfullservice.repository.cinemaRelatedRepositories.HallRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.cinemaRelatedRepositories.RowRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.cinemaRelatedRepositories.SeatRepository;
@@ -32,9 +32,9 @@ public class HallService {
 
             if (fixedNumberOfSeatsForEachRow != null){
                 boolean rowNumberExists = false;
-                if (hallDto.getRowSeats() != null && hallDto.getRowSeats().size() != 0){
-                    for (RowSeat rowSeat : hallDto.getRowSeats()) {
-                        if (rowSeat.getRowNumber() == i){
+                if (hallDto.getRowDtos() != null && hallDto.getRowDtos().size() != 0){
+                    for (RowDto rowDto : hallDto.getRowDtos()) {
+                        if (rowDto.getRowNumber() == i){
                             rowNumberExists = true;
                             break;
                         }
@@ -51,11 +51,11 @@ public class HallService {
                rowRepository.save(new Row(i, savedHall));
             }
 
-            if (hallDto.getRowSeats() != null && hallDto.getRowSeats().size() != 0){
-                for (RowSeat rowSeat : hallDto.getRowSeats()) {
-                    if (rowSeat.getRowNumber() == i){
-                        Row savedRow = rowRepository.save(new Row(rowSeat.getRowNumber(), savedHall));
-                        for (int j = 1; j <= rowSeat.getNumberOfSeats(); j++) {
+            if (hallDto.getRowDtos() != null && hallDto.getRowDtos().size() != 0){
+                for (RowDto rowDto : hallDto.getRowDtos()) {
+                    if (rowDto.getRowNumber() == i){
+                        Row savedRow = rowRepository.save(new Row(rowDto.getRowNumber(), savedHall));
+                        for (int j = 1; j <= rowDto.getNumberOfSeats(); j++) {
                             seatRepository.save(new Seat(j, savedRow));
                         }
                         break;

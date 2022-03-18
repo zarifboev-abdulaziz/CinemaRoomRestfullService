@@ -124,5 +124,7 @@ public class DataLoader implements CommandLineRunner {
 //        reservedHallRepository.save(new ReservedHall(afisha2, hall4, date3, startTime, endTime)); //Spiderman 19 mart Zal Vip
 
 
+
+
     }
 }

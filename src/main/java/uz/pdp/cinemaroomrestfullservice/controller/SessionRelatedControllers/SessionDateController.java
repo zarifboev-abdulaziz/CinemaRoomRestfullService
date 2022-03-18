@@ -6,10 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.ReservedHall;
 import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.SessionDate;
 import uz.pdp.cinemaroomrestfullservice.payload.ApiResponse;
-import uz.pdp.cinemaroomrestfullservice.payload.sessionRelatedPayloads.ReservedHallDto;
 import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.SessionDateRepository;
 
 import java.util.Optional;

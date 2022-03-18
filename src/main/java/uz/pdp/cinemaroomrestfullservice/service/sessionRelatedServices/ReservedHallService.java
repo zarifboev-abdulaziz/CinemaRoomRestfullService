@@ -3,21 +3,18 @@ package uz.pdp.cinemaroomrestfullservice.service.sessionRelatedServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uz.pdp.cinemaroomrestfullservice.entity.cinemaPack.Hall;
-import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.Afisha;
-import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.ReservedHall;
+import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.MovieAnnouncement;
+import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.MovieSession;
 import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.SessionDate;
 import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.SessionTime;
 import uz.pdp.cinemaroomrestfullservice.payload.ApiResponse;
 import uz.pdp.cinemaroomrestfullservice.payload.sessionRelatedPayloads.ReservedHallDto;
 import uz.pdp.cinemaroomrestfullservice.repository.cinemaRelatedRepositories.HallRepository;
-import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.AfishaRepository;
-import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.ReservedHallRepository;
+import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.MovieAnnouncementRepository;
+import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.MovieSessionRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.SessionDateRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.SessionTimeRepository;
 
-import javax.xml.crypto.Data;
-import java.sql.Date;
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Optional;
@@ -25,7 +22,7 @@ import java.util.Optional;
 @Service
 public class ReservedHallService {
     @Autowired
-    AfishaRepository afishaRepository;
+    MovieAnnouncementRepository movieAnnouncementRepository;
     @Autowired
     HallRepository hallRepository;
     @Autowired
@@ -33,13 +30,13 @@ public class ReservedHallService {
     @Autowired
     SessionTimeRepository sessionTimeRepository;
     @Autowired
-    ReservedHallRepository reservedHallRepository;
+    MovieSessionRepository movieSessionRepository;
 
 
 
 
     public ApiResponse saveReservedHall(ReservedHallDto reservedHallDto) {
-        Optional<Afisha> optionalAfisha = afishaRepository.findById(reservedHallDto.getAfishaId());
+        Optional<MovieAnnouncement> optionalAfisha = movieAnnouncementRepository.findById(reservedHallDto.getAfishaId());
         if (!optionalAfisha.isPresent())
             return new ApiResponse("Afisha not found", false);
 
@@ -74,15 +71,15 @@ public class ReservedHallService {
             endTime = sessionEndTimeOptional.get();
         }
 
-        ReservedHall reservedHall = new ReservedHall();
-        reservedHall.setId(reservedHallDto.getId());
-        reservedHall.setHall(optionalHall.get());
-        reservedHall.setAfisha(optionalAfisha.get());
-        reservedHall.setStartDate(startDate);
-        reservedHall.setStartTime(startTime);
-        reservedHall.setEndTime(endTime);
-        ReservedHall savedReservedHall = reservedHallRepository.save(reservedHall);
+        MovieSession movieSession = new MovieSession();
+        movieSession.setId(reservedHallDto.getId());
+        movieSession.setHall(optionalHall.get());
+        movieSession.setMovieAnnouncement(optionalAfisha.get());
+        movieSession.setStartDate(startDate);
+        movieSession.setStartTime(startTime);
+        movieSession.setEndTime(endTime);
+        MovieSession savedMovieSession = movieSessionRepository.save(movieSession);
 
-        return new ApiResponse("Reserve Hall Successfully Saved", true, savedReservedHall);
+        return new ApiResponse("Reserve Hall Successfully Saved", true, savedMovieSession);
     }
 }

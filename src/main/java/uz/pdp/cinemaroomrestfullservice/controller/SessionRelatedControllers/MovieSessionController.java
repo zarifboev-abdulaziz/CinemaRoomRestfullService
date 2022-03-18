@@ -6,21 +6,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.Afisha;
-import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.ReservedHall;
+import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.MovieSession;
 import uz.pdp.cinemaroomrestfullservice.payload.ApiResponse;
-import uz.pdp.cinemaroomrestfullservice.payload.sessionRelatedPayloads.AfishaDto;
 import uz.pdp.cinemaroomrestfullservice.payload.sessionRelatedPayloads.ReservedHallDto;
-import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.ReservedHallRepository;
+import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.MovieSessionRepository;
 import uz.pdp.cinemaroomrestfullservice.service.sessionRelatedServices.ReservedHallService;
 
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/reservedHall")
-public class ReservedHallController {
+@RequestMapping("/api/movieSession")
+public class MovieSessionController {
     @Autowired
-    ReservedHallRepository reservedHallRepository;
+    MovieSessionRepository movieSessionRepository;
     @Autowired
     ReservedHallService reservedHallService;
 
@@ -28,20 +26,20 @@ public class ReservedHallController {
     @GetMapping
     public HttpEntity<?> getAllReservedHall(@RequestParam(defaultValue = "0") Integer page) {
         Pageable pageable = PageRequest.of(page, 10);
-        return ResponseEntity.ok(reservedHallRepository.findAll(pageable));
+        return ResponseEntity.ok(movieSessionRepository.findAll(pageable));
     }
 
     @GetMapping("/{id}")
     public HttpEntity<?> getOneReservedHall(@PathVariable Long id) {
-        Optional<ReservedHall> optionalReservedHall = reservedHallRepository.findById(id);
-        ReservedHall reservedHall = optionalReservedHall.orElse(null);
-        return ResponseEntity.status(reservedHall != null ? 200 : 404).body(reservedHall);
+        Optional<MovieSession> optionalReservedHall = movieSessionRepository.findById(id);
+        MovieSession movieSession = optionalReservedHall.orElse(null);
+        return ResponseEntity.status(movieSession != null ? 200 : 404).body(movieSession);
     }
 
     @DeleteMapping("/{id}")
     public HttpEntity<?> deleteReservedHall(@PathVariable Long id){
         try {
-            reservedHallRepository.deleteById(id);
+            movieSessionRepository.deleteById(id);
             return ResponseEntity.status(204).body("Successfully Deleted");
         } catch (Exception e){
             return ResponseEntity.status(409).body("Failed to delete");

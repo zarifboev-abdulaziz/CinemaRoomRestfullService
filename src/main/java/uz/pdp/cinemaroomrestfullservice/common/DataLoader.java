@@ -6,25 +6,21 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import uz.pdp.cinemaroomrestfullservice.entity.cinemaPack.Hall;
 import uz.pdp.cinemaroomrestfullservice.entity.moviePack.*;
-import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.Afisha;
-import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.ReservedHall;
+import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.MovieAnnouncement;
+import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.MovieSession;
 import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.SessionDate;
 import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.SessionTime;
 import uz.pdp.cinemaroomrestfullservice.repository.cinemaRelatedRepositories.HallRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.movieRelatedRepositories.*;
-import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.AfishaRepository;
-import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.ReservedHallRepository;
+import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.MovieAnnouncementRepository;
+import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.MovieSessionRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.SessionDateRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.SessionTimeRepository;
 
-import javax.xml.crypto.Data;
-import java.sql.Date;
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Locale;
 
 @Component
 public class DataLoader implements CommandLineRunner {
@@ -46,9 +42,9 @@ public class DataLoader implements CommandLineRunner {
     @Autowired
     HallRepository hallRepository;
     @Autowired
-    AfishaRepository afishaRepository;
+    MovieAnnouncementRepository movieAnnouncementRepository;
     @Autowired
-    ReservedHallRepository reservedHallRepository;
+    MovieSessionRepository movieSessionRepository;
     @Autowired
     SessionDateRepository sessionDateRepository;
     @Autowired
@@ -99,29 +95,26 @@ public class DataLoader implements CommandLineRunner {
         Hall hall3 = hallRepository.save(new Hall("Zal 3", 0));
         Hall hall4 = hallRepository.save(new Hall("Vip Zal", 10));
 
-        Afisha afisha1 = afishaRepository.save(new Afisha(movie1, true));
-        Afisha afisha2 = afishaRepository.save(new Afisha(movie2, true));
+        MovieAnnouncement movieAnnouncement1 = movieAnnouncementRepository.save(new MovieAnnouncement(movie1, true));
+        MovieAnnouncement movieAnnouncement2 = movieAnnouncementRepository.save(new MovieAnnouncement(movie2, true));
 
-        SessionDate date1 = sessionDateRepository.save(new SessionDate( LocalDate.of(2022, 03, 17)));
-        SessionDate date2 = sessionDateRepository.save(new SessionDate(LocalDate.of(2022, 03, 18)));
-        SessionDate date3 = sessionDateRepository.save(new SessionDate(LocalDate.of(2022, 03, 19)));
+        SessionDate date1 = sessionDateRepository.save(new SessionDate( LocalDate.of(2022, 03, 18)));
+        SessionDate date2 = sessionDateRepository.save(new SessionDate(LocalDate.of(2022, 03, 19)));
+        SessionDate date3 = sessionDateRepository.save(new SessionDate(LocalDate.of(2022, 03, 20)));
 
-        SessionTime startTime = sessionTimeRepository.save(new SessionTime(LocalTime.of(10, 00, 00)));
-        SessionTime endTime = sessionTimeRepository.save(new SessionTime(LocalTime.of(12, 00, 00)));
-        SessionTime time = sessionTimeRepository.save(new SessionTime(LocalTime.of(14, 00, 00)));
+        SessionTime time1 = sessionTimeRepository.save(new SessionTime(LocalTime.of(10, 00, 00)));
+        SessionTime time2 = sessionTimeRepository.save(new SessionTime(LocalTime.of(12, 00, 00)));
+        SessionTime time3 = sessionTimeRepository.save(new SessionTime(LocalTime.of(14, 00, 00)));
+        SessionTime time4 = sessionTimeRepository.save(new SessionTime(LocalTime.of(16, 00, 00)));
 
-        reservedHallRepository.save(new ReservedHall(afisha1, hall1, date1, startTime, endTime)); //Batman 17 mart Zal 1 | 10:00
-        reservedHallRepository.save(new ReservedHall(afisha1, hall1, date1, endTime, time)); //Batman 17 mart Zal 1 | 12:00
+        movieSessionRepository.save(new MovieSession(movieAnnouncement1, hall1, date1, time1, time2)); //Batman 18 mart Zal 1 | 10:00
+        movieSessionRepository.save(new MovieSession(movieAnnouncement1, hall1, date1, time2, time3)); //Batman 18 mart Zal 1 | 12:00
 
-        reservedHallRepository.save(new ReservedHall(afisha1, hall2, date1, startTime, endTime)); //Batman 17 mart Zal 2
-        reservedHallRepository.save(new ReservedHall(afisha1, hall2, date1, endTime, time)); //Batman 17 mart Zal 2
+        movieSessionRepository.save(new MovieSession(movieAnnouncement1, hall2, date1, time1, time2)); //Batman 18 mart Zal 2 | 10:00
+        movieSessionRepository.save(new MovieSession(movieAnnouncement1, hall2, date1, time2, time3)); //Batman 18 mart Zal 2 | 12:00
 
-//        reservedHallRepository.save(new ReservedHall(afisha1, hall1, date2, startTime, endTime)); //Batman 18 mart Zal 1
-//        reservedHallRepository.save(new ReservedHall(afisha1, hall2, date2, startTime, endTime)); //Batman 18 mart Zal 2
-//        reservedHallRepository.save(new ReservedHall(afisha1, hall3, date2, startTime, endTime)); //Batman 18 mart Zal 2
-//
-//        reservedHallRepository.save(new ReservedHall(afisha2, hall3, date3, startTime, endTime)); //Spiderman 19 mart Zal 3
-//        reservedHallRepository.save(new ReservedHall(afisha2, hall4, date3, startTime, endTime)); //Spiderman 19 mart Zal Vip
+        movieSessionRepository.save(new MovieSession(movieAnnouncement2, hall3, date2, time2, time3)); //Batman 19 mart Zal 3 | 12:00
+        movieSessionRepository.save(new MovieSession(movieAnnouncement2, hall3, date2, time3, time4)); //Batman 19 mart Zal 3 | 14:00
 
 
 

@@ -1,35 +1,31 @@
 package uz.pdp.cinemaroomrestfullservice.controller.SessionRelatedControllers;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.Afisha;
+import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.MovieAnnouncement;
 import uz.pdp.cinemaroomrestfullservice.payload.ApiResponse;
 import uz.pdp.cinemaroomrestfullservice.payload.sessionRelatedPayloads.AfishaDto;
-import uz.pdp.cinemaroomrestfullservice.payload.sessionRelatedPayloads.AfishaProjection;
-import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.AfishaRepository;
+import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.MovieAnnouncementRepository;
 import uz.pdp.cinemaroomrestfullservice.service.sessionRelatedServices.AfishaService;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/afisha")
-public class AfishaController {
+@RequestMapping("/api/movieAnnouncement")
+public class MovieAnnouncementController {
     @Autowired
-    AfishaRepository afishaRepository;
+    MovieAnnouncementRepository movieAnnouncementRepository;
     @Autowired
     AfishaService afishaService;
 
     @GetMapping("/dto")
     public HttpEntity<?> getAllAfishaDto(@RequestParam(defaultValue = "0") Integer page) {
 
-        return ResponseEntity.status(200).body(afishaRepository.getAllAfishaDto(PageRequest.of(page, 10)));
+        return ResponseEntity.status(200).body(movieAnnouncementRepository.getAllMovieAnnouncementsDto(PageRequest.of(page, 10)));
 
 //        List<String> allAfisha = afishaRepository.getAllAfishaDto();
 //        Gson gson = new Gson();
@@ -39,22 +35,22 @@ public class AfishaController {
     @GetMapping
     public HttpEntity<?> getAllAfisha(@RequestParam(defaultValue = "0") Integer page) {
         Pageable pageable = PageRequest.of(page, 10);
-        return ResponseEntity.ok(afishaRepository.findAll(pageable));
+        return ResponseEntity.ok(movieAnnouncementRepository.findAll(pageable));
     }
 
     @GetMapping("/{id}")
     public HttpEntity<?> getOneAfisha(@PathVariable Long id) {
-        Optional<Afisha> optionalAfisha = afishaRepository.findById(id);
+        Optional<MovieAnnouncement> optionalAfisha = movieAnnouncementRepository.findById(id);
 
-        Afisha afisha = optionalAfisha.orElse(null);
-        return ResponseEntity.status(afisha != null ? 200 : 404).body(afisha);
+        MovieAnnouncement movieAnnouncement = optionalAfisha.orElse(null);
+        return ResponseEntity.status(movieAnnouncement != null ? 200 : 404).body(movieAnnouncement);
     }
 
 
     @DeleteMapping("/{id}")
     public HttpEntity<?> deleteAfisha(@PathVariable Long id){
         try {
-            afishaRepository.deleteById(id);
+            movieAnnouncementRepository.deleteById(id);
             return ResponseEntity.status(204).body("Successfully Deleted");
         } catch (Exception e){
             return ResponseEntity.status(409).body("Failed to delete");

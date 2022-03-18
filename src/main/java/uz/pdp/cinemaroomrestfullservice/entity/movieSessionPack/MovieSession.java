@@ -6,28 +6,34 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import uz.pdp.cinemaroomrestfullservice.entity.moviePack.Movie;
+import uz.pdp.cinemaroomrestfullservice.entity.cinemaPack.Hall;
 import uz.pdp.cinemaroomrestfullservice.entity.template.AbsEntity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "afishas")
+@Entity(name = "movie_sessions")
 @OnDelete(action = OnDeleteAction.CASCADE)
-public class Afisha extends AbsEntity {
+public class MovieSession extends AbsEntity {
+    @ManyToOne(cascade = CascadeType.MERGE)
+    private MovieAnnouncement movieAnnouncement;
 
-    @OneToOne(cascade = CascadeType.MERGE)
-    private Movie movie;
+    @ManyToOne(cascade = CascadeType.MERGE)
+    private Hall hall;
 
-    private boolean active;
+    @ManyToOne(cascade = CascadeType.MERGE)
+    private SessionDate startDate;
 
+    @ManyToOne(cascade = CascadeType.MERGE)
+    private SessionTime startTime;
 
+    @ManyToOne(cascade = CascadeType.MERGE)
+    private SessionTime endTime;
 
 
 }

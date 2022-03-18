@@ -6,7 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import uz.pdp.cinemaroomrestfullservice.entity.cinemaPack.Seat;
 import uz.pdp.cinemaroomrestfullservice.entity.moviePack.Attachment;
-import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.Afisha;
+import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.MovieAnnouncement;
+import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.MovieSession;
 import uz.pdp.cinemaroomrestfullservice.entity.template.AbsEntity;
 import uz.pdp.cinemaroomrestfullservice.entity.userPack.Cart;
 
@@ -20,7 +21,7 @@ import javax.persistence.*;
 public class Ticket extends AbsEntity {
 
     @ManyToOne
-    private Afisha afisha;
+    private MovieSession movieSession;
 
     @ManyToOne
     private Seat seat;

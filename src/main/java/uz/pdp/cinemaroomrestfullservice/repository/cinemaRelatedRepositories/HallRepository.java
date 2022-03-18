@@ -14,12 +14,14 @@ import java.util.List;
 @Repository
 public interface HallRepository extends JpaRepository<Hall, Long> {
 
-    @Query(value = "    select h.id, h.name \n" +
-            "    from reserved_halls rh\n" +
-            "    join halls h on h.id = rh.hall_id\n" +
-            "    where rh.afisha_id =:afishaId and rh.start_date_id =:startDateId\n" +
-            "    group by h.id, h.name", nativeQuery = true)
-    List<HallProjection> getHallsByAfishaId(Long afishaId, Long startDateId);
+    @Query(value = "select h.id, h.name,\n" +
+            "       ms.movie_announcement_id as movieAnnouncementId,\n" +
+            "       ms.start_date_id as startDateId\n" +
+            "from movie_sessions ms\n" +
+            "         join halls h on h.id = ms.hall_id\n" +
+            "where ms.movie_announcement_id =:movieAnnouncement and ms.start_date_id =:startDate\n" +
+            "group by h.id, h.name, ms.movie_announcement_id, ms.start_date_id", nativeQuery = true)
+    List<HallProjection> getHallsByMovieAnnouncementId(Long movieAnnouncement, Long startDate);
 
 
     @Query(value = "with cte as (\n" +

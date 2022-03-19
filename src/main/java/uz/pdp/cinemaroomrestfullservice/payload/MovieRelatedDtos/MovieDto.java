@@ -1,4 +1,4 @@
-package uz.pdp.cinemaroomrestfullservice.payload;
+package uz.pdp.cinemaroomrestfullservice.payload.MovieRelatedDtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

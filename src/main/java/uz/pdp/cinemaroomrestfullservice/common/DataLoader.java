@@ -5,12 +5,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import uz.pdp.cinemaroomrestfullservice.entity.cinemaPack.Hall;
+import uz.pdp.cinemaroomrestfullservice.entity.cinemaPack.PriceCategory;
+import uz.pdp.cinemaroomrestfullservice.entity.cinemaPack.Row;
+import uz.pdp.cinemaroomrestfullservice.entity.cinemaPack.Seat;
 import uz.pdp.cinemaroomrestfullservice.entity.moviePack.*;
 import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.MovieAnnouncement;
 import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.MovieSession;
 import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.SessionDate;
 import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.SessionTime;
 import uz.pdp.cinemaroomrestfullservice.repository.cinemaRelatedRepositories.HallRepository;
+import uz.pdp.cinemaroomrestfullservice.repository.cinemaRelatedRepositories.PriceCategoryRepository;
+import uz.pdp.cinemaroomrestfullservice.repository.cinemaRelatedRepositories.RowRepository;
+import uz.pdp.cinemaroomrestfullservice.repository.cinemaRelatedRepositories.SeatRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.movieRelatedRepositories.*;
 import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.MovieAnnouncementRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.MovieSessionRepository;
@@ -21,6 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class DataLoader implements CommandLineRunner {
@@ -49,6 +56,12 @@ public class DataLoader implements CommandLineRunner {
     SessionDateRepository sessionDateRepository;
     @Autowired
     SessionTimeRepository sessionTimeRepository;
+    @Autowired
+    PriceCategoryRepository priceCategoryRepository;
+    @Autowired
+    RowRepository rowRepository;
+    @Autowired
+    SeatRepository seatRepository;
 
 
     @Override
@@ -94,11 +107,12 @@ public class DataLoader implements CommandLineRunner {
         Hall hall2 = hallRepository.save(new Hall("Zal 2", 0));
         Hall hall3 = hallRepository.save(new Hall("Zal 3", 0));
         Hall hall4 = hallRepository.save(new Hall("Vip Zal", 10));
+        saveRowsAndSeats(Arrays.asList(hall1, hall2, hall3, hall4));
 
         MovieAnnouncement movieAnnouncement1 = movieAnnouncementRepository.save(new MovieAnnouncement(movie1, true));
         MovieAnnouncement movieAnnouncement2 = movieAnnouncementRepository.save(new MovieAnnouncement(movie2, true));
 
-        SessionDate date1 = sessionDateRepository.save(new SessionDate( LocalDate.of(2022, 03, 18)));
+        SessionDate date1 = sessionDateRepository.save(new SessionDate(LocalDate.of(2022, 03, 18)));
         SessionDate date2 = sessionDateRepository.save(new SessionDate(LocalDate.of(2022, 03, 19)));
         SessionDate date3 = sessionDateRepository.save(new SessionDate(LocalDate.of(2022, 03, 20)));
 
@@ -116,8 +130,30 @@ public class DataLoader implements CommandLineRunner {
         movieSessionRepository.save(new MovieSession(movieAnnouncement2, hall3, date2, time2, time3)); //Batman 19 mart Zal 3 | 12:00
         movieSessionRepository.save(new MovieSession(movieAnnouncement2, hall3, date2, time3, time4)); //Batman 19 mart Zal 3 | 14:00
 
+    }
 
+    public void saveRowsAndSeats(List<Hall> hallList) {
+        PriceCategory priceCategory = priceCategoryRepository.save(new PriceCategory("small", 0, "green"));
+        PriceCategory priceCategory1 = priceCategoryRepository.save(new PriceCategory("medium", 5, "yellow"));
+        PriceCategory priceCategory2 = priceCategoryRepository.save(new PriceCategory("high", 10, "red"));
 
+        for (Hall hall : hallList) {
+            for (int i = 1; i <= 5; i++) {
+                Row savedRow = rowRepository.save(new Row(i, hall));
+
+                for (int j = 1; j <= 10; j++) {
+                    if (j < 5) {
+                        seatRepository.save(new Seat(j, savedRow, priceCategory));
+                    } else if(hall.getName().equals("Vip Zal")){
+                        seatRepository.save(new Seat(j, savedRow, priceCategory2));
+                    } else {
+                        seatRepository.save(new Seat(j, savedRow, priceCategory1));
+                    }
+                }
+            }
+        }
 
     }
+
+
 }

@@ -1,13 +1,12 @@
 package uz.pdp.cinemaroomrestfullservice.service.MovieRelatedServices;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import uz.pdp.cinemaroomrestfullservice.entity.moviePack.*;
 import uz.pdp.cinemaroomrestfullservice.payload.ApiResponse;
-import uz.pdp.cinemaroomrestfullservice.payload.MovieDto;
-import uz.pdp.cinemaroomrestfullservice.payload.MovieFiles;
+import uz.pdp.cinemaroomrestfullservice.payload.MovieRelatedDtos.MovieDto;
+import uz.pdp.cinemaroomrestfullservice.payload.MovieRelatedDtos.MovieFiles;
 import uz.pdp.cinemaroomrestfullservice.repository.movieRelatedRepositories.DirectorRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.movieRelatedRepositories.DistributorRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.movieRelatedRepositories.GenreRepository;

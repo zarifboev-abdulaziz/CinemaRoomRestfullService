@@ -19,6 +19,8 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
 
     Optional<Seat> findByIdAndRowId(Long id, Long row_id);
 
+    Optional<Seat> findByNumberAndRowId(Integer number, Long row_id);
+
     void deleteByIdAndRowId(Long id, Long row_id);
 
     boolean existsByNumberAndRowId(Integer number, Long row_id);

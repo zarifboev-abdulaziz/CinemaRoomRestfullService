@@ -1,20 +1,15 @@
 package uz.pdp.cinemaroomrestfullservice.controller.movieRelatedControllers;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import uz.pdp.cinemaroomrestfullservice.entity.moviePack.Genre;
 import uz.pdp.cinemaroomrestfullservice.entity.moviePack.Movie;
 import uz.pdp.cinemaroomrestfullservice.payload.ApiResponse;
-import uz.pdp.cinemaroomrestfullservice.payload.MovieDto;
-import uz.pdp.cinemaroomrestfullservice.payload.MovieFiles;
+import uz.pdp.cinemaroomrestfullservice.payload.MovieRelatedDtos.MovieDto;
+import uz.pdp.cinemaroomrestfullservice.payload.MovieRelatedDtos.MovieFiles;
 import uz.pdp.cinemaroomrestfullservice.repository.movieRelatedRepositories.MovieRepository;
 import uz.pdp.cinemaroomrestfullservice.service.MovieRelatedServices.MovieService;
 

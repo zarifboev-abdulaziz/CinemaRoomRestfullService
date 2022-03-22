@@ -5,10 +5,15 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.MovieSession;
+import uz.pdp.cinemaroomrestfullservice.entity.ticketPack.Ticket;
+import uz.pdp.cinemaroomrestfullservice.entity.userPack.Cart;
 import uz.pdp.cinemaroomrestfullservice.payload.ApiResponse;
 import uz.pdp.cinemaroomrestfullservice.payload.cinemaRelatedPayloads.SeatPriceCategoryDto;
 import uz.pdp.cinemaroomrestfullservice.repository.cinemaRelatedRepositories.SeatRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.MovieSessionRepository;
+import uz.pdp.cinemaroomrestfullservice.repository.userRelatedRepositories.CartRepository;
+import uz.pdp.cinemaroomrestfullservice.repository.userRelatedRepositories.UserRepository;
+import uz.pdp.cinemaroomrestfullservice.service.business.BusinessService;
 import uz.pdp.cinemaroomrestfullservice.service.cinemaRelatedServices.SeatService;
 
 import java.util.Optional;
@@ -22,6 +27,8 @@ public class BusinessProcessController {
     MovieSessionRepository movieSessionRepository;
     @Autowired
     SeatService seatService;
+    @Autowired
+    BusinessService businessService;
 
     @GetMapping("/availableSeats/{movieSessionId}")
     public HttpEntity<?> showAvailableSeats(@PathVariable Long movieSessionId){
@@ -38,6 +45,33 @@ public class BusinessProcessController {
 
         return ResponseEntity.status(apiResponse.isSuccess() ? 202 : 409).body(apiResponse);
     }
+
+    @GetMapping("/add-ticket-to-cart/{movieSessionId}/{seatId}")
+    public HttpEntity<?> addTicketToCart(@PathVariable Long movieSessionId, @PathVariable Long seatId){
+        ApiResponse apiResponse = businessService.addTicketToCart(movieSessionId, seatId);
+
+        return ResponseEntity.status(apiResponse.isSuccess()? 202 : 404).body(apiResponse);
+    }
+
+    @GetMapping("/my-cart")
+    public HttpEntity<?> showMyCart(){
+        ApiResponse apiResponse = businessService.showMyCart();
+        return ResponseEntity.status(apiResponse.isSuccess()? 200 : 409).body(apiResponse);
+    }
+
+    @GetMapping("/clear-cart")
+    public HttpEntity<?> clearMyCart(){
+        ApiResponse apiResponse = businessService.clearMyCart();
+        return ResponseEntity.status(apiResponse.isSuccess()? 200 : 409).body(apiResponse);
+    }
+
+    @GetMapping("/clear-cart/{ticketId}")
+    public HttpEntity<?> deleteByTicketId(@PathVariable Long ticketId){
+        ApiResponse apiResponse = businessService.deleteByTicketId(ticketId);
+        return ResponseEntity.status(apiResponse.isSuccess()? 200 : 409).body(apiResponse);
+    }
+
+
 
 
 

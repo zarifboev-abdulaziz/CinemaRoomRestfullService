@@ -1,6 +1,7 @@
-package uz.pdp.cinemaroomrestfullservice.controller.movieRelatedControllers;
+package uz.pdp.cinemaroomrestfullservice.common;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
@@ -14,70 +15,34 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
-import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import uz.pdp.cinemaroomrestfullservice.entity.moviePack.Attachment;
 import uz.pdp.cinemaroomrestfullservice.entity.moviePack.AttachmentContent;
-import uz.pdp.cinemaroomrestfullservice.payload.ApiResponse;
 import uz.pdp.cinemaroomrestfullservice.repository.movieRelatedRepositories.AttachmentContentRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.movieRelatedRepositories.AttachmentRepository;
-import uz.pdp.cinemaroomrestfullservice.service.MovieRelatedServices.AttachmentService;
+
 
 import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletResponse;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.List;
 
-@RestController
-@RequestMapping("/api/file")
-public class AttachmentController {
-    @Autowired
-    AttachmentService attachmentService;
+@Component
+public class GenerateDocument {
     @Autowired
     AttachmentRepository attachmentRepository;
     @Autowired
     AttachmentContentRepository attachmentContentRepository;
 
 
-    @PostMapping("/upload")
-    public HttpEntity<?> uploadFile(MultipartHttpServletRequest request) {
-        ApiResponse apiResponse = attachmentService.uploadFile(request);
-
-        return ResponseEntity.status(apiResponse.isSuccess() ? 201 : 409).body(apiResponse);
-    }
-
-    @SneakyThrows
-    @GetMapping("/download/{attachmentId}")
-    public HttpEntity<?> downloadFile(@PathVariable Long attachmentId, HttpServletResponse response) {
-        Optional<Attachment> attachmentById = attachmentRepository.findById(attachmentId);
-        if (!attachmentById.isPresent()) {
-            return ResponseEntity.status(404).body("File not found");
-        }
-        Attachment attachment = attachmentById.get();
-        Optional<AttachmentContent> optionalAttachmentContent = attachmentContentRepository.findByAttachmentId(attachment.getId());
-        if (!optionalAttachmentContent.isPresent()){
-            return ResponseEntity.status(404).body("File not found");
-        }
-        AttachmentContent attachmentContent = optionalAttachmentContent.get();
-
-        response.setHeader("Content-Disposition", "attachment; filename\"" + attachment.getOriginalName() + "\"");
-        response.setContentType(attachment.getContentType());
-        FileCopyUtils.copy(attachmentContent.getBytes(), response.getOutputStream());
-
-        return ResponseEntity.status(204).build();
-    }
-
-
-    @GetMapping("/pdf")
     public void generateTicketPdf() throws IOException, WriterException {
 //        File file = new File("src/main/resources/static/test.pdf");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -134,5 +99,6 @@ public class AttachmentController {
         System.out.println(savedAttachment.getId());
 
     }
+
 
 }

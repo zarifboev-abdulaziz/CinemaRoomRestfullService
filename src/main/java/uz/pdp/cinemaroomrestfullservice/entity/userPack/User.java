@@ -32,6 +32,11 @@ public class User extends AbsEntity {
     @ManyToMany
     private List<Permission> permissions = new ArrayList<>();
 
-
-
+    public User(String fullName, String username, String password, Date dateOfBirth, Gender gender) {
+        this.fullName = fullName;
+        this.username = username;
+        this.password = password;
+        this.dateOfBirth = dateOfBirth;
+        this.gender = gender;
+    }
 }

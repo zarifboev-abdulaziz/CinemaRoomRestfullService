@@ -8,11 +8,14 @@ import uz.pdp.cinemaroomrestfullservice.entity.cinemaPack.Hall;
 import uz.pdp.cinemaroomrestfullservice.entity.cinemaPack.PriceCategory;
 import uz.pdp.cinemaroomrestfullservice.entity.cinemaPack.Row;
 import uz.pdp.cinemaroomrestfullservice.entity.cinemaPack.Seat;
+import uz.pdp.cinemaroomrestfullservice.entity.enums.Gender;
 import uz.pdp.cinemaroomrestfullservice.entity.moviePack.*;
 import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.MovieAnnouncement;
 import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.MovieSession;
 import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.SessionDate;
 import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.SessionTime;
+import uz.pdp.cinemaroomrestfullservice.entity.userPack.Cart;
+import uz.pdp.cinemaroomrestfullservice.entity.userPack.User;
 import uz.pdp.cinemaroomrestfullservice.repository.cinemaRelatedRepositories.HallRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.cinemaRelatedRepositories.PriceCategoryRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.cinemaRelatedRepositories.RowRepository;
@@ -22,11 +25,14 @@ import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.Mo
 import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.MovieSessionRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.SessionDateRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.SessionTimeRepository;
+import uz.pdp.cinemaroomrestfullservice.repository.userRelatedRepositories.CartRepository;
+import uz.pdp.cinemaroomrestfullservice.repository.userRelatedRepositories.UserRepository;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -62,6 +68,10 @@ public class DataLoader implements CommandLineRunner {
     RowRepository rowRepository;
     @Autowired
     SeatRepository seatRepository;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    CartRepository cartRepository;
 
 
     @Override
@@ -130,6 +140,11 @@ public class DataLoader implements CommandLineRunner {
         movieSessionRepository.save(new MovieSession(movieAnnouncement2, hall3, date2, time2, time3)); //Batman 19 mart Zal 3 | 12:00
         movieSessionRepository.save(new MovieSession(movieAnnouncement2, hall3, date2, time3, time4)); //Batman 19 mart Zal 3 | 14:00
 
+        User user1 = userRepository.save(new User("Abdulaziz Zarifboyev", "user", "123", new Date(), Gender.MALE));
+        User user2 = userRepository.save(new User("Abdulaziz Zarifboyev", "user", "123", new Date(), Gender.MALE));
+
+        cartRepository.save(new Cart(user1));
+        cartRepository.save(new Cart(user2));
     }
 
     public void saveRowsAndSeats(List<Hall> hallList) {

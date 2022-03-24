@@ -5,7 +5,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import uz.pdp.cinemaroomrestfullservice.aop.CheckPermission;
 import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.SessionDate;
 import uz.pdp.cinemaroomrestfullservice.payload.ApiResponse;
 import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.SessionDateRepository;
@@ -18,12 +20,16 @@ public class SessionDateController {
     @Autowired
     SessionDateRepository sessionDateRepository;
 
+//    @CheckPermission(value = "VIEW_SESSION_DATES")
+    @PreAuthorize(value = "hasAuthority('VIEW_SESSION_DATES')")
     @GetMapping
     public HttpEntity<?> getAllSessionDate(@RequestParam(defaultValue = "0") Integer page) {
         Pageable pageable = PageRequest.of(page, 10);
         return ResponseEntity.ok(sessionDateRepository.findAll(pageable));
     }
 
+    //    @CheckPermission(value = "VIEW_SESSION_DATES")
+    @PreAuthorize(value = "hasAuthority('VIEW_SESSION_DATES')")
     @GetMapping("/{id}")
     public HttpEntity<?> getOneSessionDate(@PathVariable Long id) {
         Optional<SessionDate> optionalSessionDate = sessionDateRepository.findById(id);
@@ -32,6 +38,7 @@ public class SessionDateController {
     }
 
 
+    @PreAuthorize(value = "hasAuthority('MANAGE_SESSION_DATE')")
     @DeleteMapping("/{id}")
     public HttpEntity<?> deleteSessionDate(@PathVariable Long id){
         try {
@@ -42,6 +49,7 @@ public class SessionDateController {
         }
     }
 
+    @PreAuthorize(value = "hasAuthority('MANAGE_SESSION_DATE')")
     @PostMapping
     public HttpEntity<?> saveSessionDate(@RequestBody SessionDate sessionDate){
         Optional<SessionDate> optionalSessionDate = sessionDateRepository.findByDate(sessionDate.getDate());
@@ -53,6 +61,7 @@ public class SessionDateController {
         }
     }
 
+    @PreAuthorize(value = "hasAuthority('MANAGE_SESSION_DATE')")
     @PutMapping("/{id}")
     public HttpEntity<?> editSessionDate(@PathVariable Long id, @RequestBody SessionDate sessionDate){
         Optional<SessionDate> dateOptional = sessionDateRepository.findById(id);

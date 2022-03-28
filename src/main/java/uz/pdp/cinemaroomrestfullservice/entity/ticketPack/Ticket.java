@@ -18,6 +18,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "tickets")
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"movie_session_id", "seat_id"}))
 public class Ticket extends AbsEntity {
 
     @ManyToOne

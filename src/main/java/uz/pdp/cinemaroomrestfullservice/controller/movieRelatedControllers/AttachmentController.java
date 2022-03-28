@@ -77,62 +77,6 @@ public class AttachmentController {
     }
 
 
-    @GetMapping("/pdf")
-    public void generateTicketPdf() throws IOException, WriterException {
-//        File file = new File("src/main/resources/static/test.pdf");
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        PdfWriter writer = new PdfWriter(baos);
-        PdfDocument pdfDocument = new PdfDocument(writer);
-        pdfDocument.addNewPage();
-        Document document = new Document(pdfDocument);
-
-        Paragraph paragraph = new Paragraph("Hello World");
-        document.add(paragraph);
-        float[] pointColumnWidth = {150F, 150F, 150F, 150F, 150F, 150F, 150F};
-        Table table = new Table(pointColumnWidth);
-        table.addCell("T/R");
-        table.addCell("Customer's name");
-        table.addCell("PayType");
-        table.addCell("ClothName");
-        table.addCell("Cloth price");
-        table.addCell("Cloth quantity");
-        table.addCell("Purchase time");
-        Gson gson = new Gson();
-
-
-        for (int i = 0; i < 10; i++) {
-
-            table.addCell(String.valueOf(i + 1));
-
-            table.addCell("Abdulaziz");
-            table.addCell("Click");
-            table.addCell("T-Shirt");
-            table.addCell("1200");
-            table.addCell("1");
-            table.addCell(String.valueOf(LocalDateTime.now()));
-        }
-
-        document.add(table);
-
-        BitMatrix matrix = new MultiFormatWriter().encode("datainput", BarcodeFormat.QR_CODE, 100, 100);
-        BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(matrix);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
-
-        ImageData data = ImageDataFactory.create(byteArrayOutputStream.toByteArray());
-        Image image = new Image(data);
-        image.setAutoScale(true);
-        document.add(image);
-
-        Attachment savedAttachment = attachmentRepository.save(new Attachment(String.valueOf(LocalDateTime.now()), "application/pdf", 0));
-
-        document.close();
-        writer.close();
-
-        attachmentContentRepository.save(new AttachmentContent(baos.toByteArray(), savedAttachment));
-        System.out.println(savedAttachment.getId());
-
-    }
 
 }

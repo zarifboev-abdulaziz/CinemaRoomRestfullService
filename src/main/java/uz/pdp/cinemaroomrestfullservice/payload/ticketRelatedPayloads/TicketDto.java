@@ -19,6 +19,7 @@ public class TicketDto {
     private Integer rowNumber;
     private Integer seatNumber;
     private double price;
+    private Long qrCodeId;
 
 
 }

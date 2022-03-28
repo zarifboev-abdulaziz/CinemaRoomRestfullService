@@ -1,9 +1,11 @@
 package uz.pdp.cinemaroomrestfullservice.service.business;
 
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uz.pdp.cinemaroomrestfullservice.entity.cinemaPack.Seat;
+import uz.pdp.cinemaroomrestfullservice.entity.moviePack.Attachment;
 import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.MovieAnnouncement;
 import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.MovieSession;
 import uz.pdp.cinemaroomrestfullservice.entity.ticketPack.Status;
@@ -15,11 +17,12 @@ import uz.pdp.cinemaroomrestfullservice.repository.cinemaRelatedRepositories.Sea
 import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.MovieSessionRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.ticketRelatedRepositories.TicketRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.userRelatedRepositories.CartRepository;
+import uz.pdp.cinemaroomrestfullservice.service.MovieRelatedServices.AttachmentService;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.*;
 
 @Service
 public class BusinessService {
@@ -31,6 +34,8 @@ public class BusinessService {
     CartRepository cartRepository;
     @Autowired
     TicketRepository ticketRepository;
+    @Autowired
+    AttachmentService attachmentService;
 
     public ApiResponse addTicketToCart(Long movieSessionId, Long seatId) {
         Optional<Cart> optionalCart = cartRepository.findByUserId(1L);
@@ -64,10 +69,29 @@ public class BusinessService {
                 movieSession.getHall().getName(),
                 optionalSeat.get().getRow().getNumber(),
                 optionalSeat.get().getNumber(),
-                movieAnnouncement.getMovie().getMinPrice() * (1 + optionalSeat.get().getPriceCategory().getAdditionalFeePercentage() / 100)
+                movieAnnouncement.getMovie().getMinPrice() * (1 + optionalSeat.get().getPriceCategory().getAdditionalFeePercentage() / 100),
+                null
         );
         System.out.println(ticketDto);
-        return new ApiResponse("Successfully Added to cart", true, ticketDto);
+        setTimer(optionalCart.get().getId(), savedTicket.getId());
+        return new ApiResponse("Successfully Added to cart, You have 30 minutes to purchase!", true, ticketDto);
+    }
+
+
+    public void setTimer(Long cartId, Long ticketId){
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                Optional<Ticket> optionalTicket = ticketRepository.findById(ticketId);
+                if (!optionalTicket.isPresent()) return;
+                if (!optionalTicket.get().getStatus().equals(Status.NEW)) return;
+
+                ticketRepository.deleteById(ticketId);
+            }
+        };
+
+        Timer timer = new Timer();
+        timer.schedule(timerTask,5000);
     }
 
     public ApiResponse showMyCart() {
@@ -90,7 +114,8 @@ public class BusinessService {
                         ticket.getSeat().getRow().getNumber(),
                         ticket.getSeat().getNumber(),
                         ticket.getMovieSession().getMovieAnnouncement().getMovie().getMinPrice()
-                                * (1 + ticket.getSeat().getPriceCategory().getAdditionalFeePercentage() / 100)
+                                * (1 + ticket.getSeat().getPriceCategory().getAdditionalFeePercentage() / 100),
+                        null
                 );
                 ticketDtoList.add(ticketDto);
             }
@@ -131,5 +156,78 @@ public class BusinessService {
         }
 
         return new ApiResponse("Successfully deleted!", true);
+    }
+
+    @SneakyThrows
+    public ApiResponse purchaseTickets() {
+        Optional<Cart> optionalCart = cartRepository.findByUserId(1L);
+        if (!optionalCart.isPresent())
+            return new ApiResponse("User Cart not found", false);
+
+        List<Ticket> allByCartIdAndStatus = ticketRepository.findAllByCartIdAndStatus(optionalCart.get().getId(), Status.NEW);
+        if (allByCartIdAndStatus.size() == 0)
+            return new ApiResponse("Your cart is empty, no ticket to buy", false);
+
+        for (Ticket ticket : allByCartIdAndStatus) {
+            ticket.setStatus(Status.PURCHASED);
+            Attachment attachment = attachmentService.generateTicketPdf(ticket, optionalCart.get());
+            ticket.setQrCode(attachment);
+            ticketRepository.save(ticket);
+        }
+
+        return new ApiResponse("Ticket(s) in the cart successfully purchased", true);
+    }
+
+
+    public ApiResponse showPurchasedTickets() {
+        Optional<Cart> optionalCart = cartRepository.findByUserId(1L);
+        if (!optionalCart.isPresent())
+            return new ApiResponse("User Cart not found", false);
+
+        List<Ticket> allByCartIdAndStatus = ticketRepository.findAllByCartIdAndStatus(optionalCart.get().getId(), Status.PURCHASED);
+        if (allByCartIdAndStatus.size() == 0)
+            return new ApiResponse("No Purchased Tickets yet!", false);
+
+        List<TicketDto> ticketDtoList = new ArrayList<>();
+
+
+        for (Ticket ticket : allByCartIdAndStatus) {
+            TicketDto ticketDto = new TicketDto(
+                    ticket.getId(),
+                    ticket.getMovieSession().getMovieAnnouncement().getMovie().getTitle(),
+                    ticket.getMovieSession().getStartDate().getDate(),
+                    ticket.getMovieSession().getStartTime().getTime(),
+                    ticket.getMovieSession().getHall().getName(),
+                    ticket.getSeat().getRow().getNumber(),
+                    ticket.getSeat().getNumber(),
+                    ticket.getMovieSession().getMovieAnnouncement().getMovie().getMinPrice()
+                            * (1 + ticket.getSeat().getPriceCategory().getAdditionalFeePercentage() / 100),
+                    ticket.getQrCode().getId()
+            );
+            ticketDtoList.add(ticketDto);
+        }
+
+        return new ApiResponse("ok", true, ticketDtoList);
+    }
+
+    public ApiResponse refundTicket(Long ticketId) {
+        Optional<Cart> optionalCart = cartRepository.findByUserId(1L);
+        if (!optionalCart.isPresent())
+            return new ApiResponse("User Cart not found", false);
+
+        Optional<Ticket> optionalTicket = ticketRepository.findByIdAndCartId(ticketId, optionalCart.get().getId());
+        if (!optionalTicket.isPresent())
+            return new ApiResponse("Ticket not found", false);
+
+        Ticket refundingTicket = optionalTicket.get();
+        if (refundingTicket.getMovieSession().getStartDate().getDate().isBefore(LocalDate.now()))
+            return new ApiResponse("Ticket is expired", false);
+        if (refundingTicket.getMovieSession().getStartDate().getDate().isEqual(LocalDate.now()) &&
+        refundingTicket.getMovieSession().getEndTime().getTime().isBefore(LocalTime.now()))
+            return new ApiResponse("Ticket is expired", false);
+
+        refundingTicket.setStatus(Status.REFUNDED);
+        ticketRepository.save(refundingTicket);
+        return new ApiResponse("Ticket is Refunded", true);
     }
 }

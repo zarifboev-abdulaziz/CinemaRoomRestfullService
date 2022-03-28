@@ -131,9 +131,9 @@ public class DataLoader implements CommandLineRunner {
         MovieAnnouncement movieAnnouncement1 = movieAnnouncementRepository.save(new MovieAnnouncement(movie1, true));
         MovieAnnouncement movieAnnouncement2 = movieAnnouncementRepository.save(new MovieAnnouncement(movie2, true));
 
-        SessionDate date1 = sessionDateRepository.save(new SessionDate(LocalDate.of(2022, 03, 18)));
-        SessionDate date2 = sessionDateRepository.save(new SessionDate(LocalDate.of(2022, 03, 19)));
-        SessionDate date3 = sessionDateRepository.save(new SessionDate(LocalDate.of(2022, 03, 20)));
+        SessionDate date1 = sessionDateRepository.save(new SessionDate(LocalDate.now().plusDays(2)));
+        SessionDate date2 = sessionDateRepository.save(new SessionDate(LocalDate.now().plusDays(3)));
+        SessionDate date3 = sessionDateRepository.save(new SessionDate(LocalDate.now().plusDays(4)));
 
         SessionTime time1 = sessionTimeRepository.save(new SessionTime(LocalTime.of(10, 00, 00)));
         SessionTime time2 = sessionTimeRepository.save(new SessionTime(LocalTime.of(12, 00, 00)));

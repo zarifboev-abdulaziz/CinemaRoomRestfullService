@@ -1,6 +1,7 @@
 package uz.pdp.cinemaroomrestfullservice.repository.ticketRelatedRepositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import uz.pdp.cinemaroomrestfullservice.entity.ticketPack.Status;
 import uz.pdp.cinemaroomrestfullservice.entity.ticketPack.Ticket;
@@ -19,5 +20,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     void deleteAllByCartIdAndStatus(Long cart_id, Status status);
 
     void deleteByIdAndCartId(Long id, Long cart_id);
+
+    Optional<Ticket> findByIdAndCartId(Long id, Long cart_id);
 
 }

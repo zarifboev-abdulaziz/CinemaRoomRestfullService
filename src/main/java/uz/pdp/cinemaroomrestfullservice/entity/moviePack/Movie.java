@@ -35,6 +35,9 @@ public class Movie extends AbsEntity {
     @OneToMany(cascade = CascadeType.MERGE)
     private List<Attachment> photos;
 
+    @JoinTable(name = "movies_genres",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id"))
     @ManyToMany(cascade = CascadeType.MERGE)
     private List<Genre> genres = new ArrayList<>();
 

@@ -18,6 +18,7 @@ import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.Mo
 import uz.pdp.cinemaroomrestfullservice.repository.ticketRelatedRepositories.TicketRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.userRelatedRepositories.CartRepository;
 import uz.pdp.cinemaroomrestfullservice.service.MovieRelatedServices.AttachmentService;
+import uz.pdp.cinemaroomrestfullservice.service.paymentService.PaymentService;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -36,6 +37,8 @@ public class BusinessService {
     TicketRepository ticketRepository;
     @Autowired
     AttachmentService attachmentService;
+    @Autowired
+    PaymentService paymentService;
 
     public ApiResponse addTicketToCart(Long movieSessionId, Long seatId) {
         Optional<Cart> optionalCart = cartRepository.findByUserId(1L);
@@ -91,7 +94,7 @@ public class BusinessService {
         };
 
         Timer timer = new Timer();
-        timer.schedule(timerTask,5000);
+        timer.schedule(timerTask,50000);
     }
 
     public ApiResponse showMyCart() {
@@ -101,25 +104,7 @@ public class BusinessService {
 
         List<Ticket> allByCartIdAndStatus = ticketRepository.findAllByCartIdAndStatus(optionalCart.get().getId(), Status.NEW);
 
-        List<TicketDto> ticketDtoList = new ArrayList<>();
-
-        if (allByCartIdAndStatus != null && allByCartIdAndStatus.size() != 0) {
-            for (Ticket ticket : allByCartIdAndStatus) {
-                TicketDto ticketDto = new TicketDto(
-                        ticket.getId(),
-                        ticket.getMovieSession().getMovieAnnouncement().getMovie().getTitle(),
-                        ticket.getMovieSession().getStartDate().getDate(),
-                        ticket.getMovieSession().getStartTime().getTime(),
-                        ticket.getMovieSession().getHall().getName(),
-                        ticket.getSeat().getRow().getNumber(),
-                        ticket.getSeat().getNumber(),
-                        ticket.getMovieSession().getMovieAnnouncement().getMovie().getMinPrice()
-                                * (1 + ticket.getSeat().getPriceCategory().getAdditionalFeePercentage() / 100),
-                        null
-                );
-                ticketDtoList.add(ticketDto);
-            }
-        }
+        List<TicketDto> ticketDtoList = convertToTicketDto(allByCartIdAndStatus);
 
         return new ApiResponse("ok", true, ticketDtoList);
     }
@@ -168,14 +153,37 @@ public class BusinessService {
         if (allByCartIdAndStatus.size() == 0)
             return new ApiResponse("Your cart is empty, no ticket to buy", false);
 
+//        for (Ticket ticket : allByCartIdAndStatus) {
+//            ticket.setStatus(Status.PURCHASED);
+//            Attachment attachment = attachmentService.generateTicketPdf(ticket, optionalCart.get());
+//            ticket.setQrCode(attachment);
+//            ticketRepository.save(ticket);
+//        }
+        List<TicketDto> ticketDtoList = convertToTicketDto(allByCartIdAndStatus);
+
+        return paymentService.checkoutTickets(ticketDtoList, optionalCart.get().getId());
+    }
+
+    private List<TicketDto> convertToTicketDto(List<Ticket> allByCartIdAndStatus) {
+        List<TicketDto> ticketDtoList = new ArrayList<>();
+
         for (Ticket ticket : allByCartIdAndStatus) {
-            ticket.setStatus(Status.PURCHASED);
-            Attachment attachment = attachmentService.generateTicketPdf(ticket, optionalCart.get());
-            ticket.setQrCode(attachment);
-            ticketRepository.save(ticket);
+            TicketDto ticketDto = new TicketDto(
+                    ticket.getId(),
+                    ticket.getMovieSession().getMovieAnnouncement().getMovie().getTitle(),
+                    ticket.getMovieSession().getStartDate().getDate(),
+                    ticket.getMovieSession().getStartTime().getTime(),
+                    ticket.getMovieSession().getHall().getName(),
+                    ticket.getSeat().getRow().getNumber(),
+                    ticket.getSeat().getNumber(),
+                    ticket.getMovieSession().getMovieAnnouncement().getMovie().getMinPrice()
+                            * (1 + ticket.getSeat().getPriceCategory().getAdditionalFeePercentage() / 100),
+                    null
+            );
+            ticketDtoList.add(ticketDto);
         }
 
-        return new ApiResponse("Ticket(s) in the cart successfully purchased", true);
+        return ticketDtoList;
     }
 
 
@@ -225,9 +233,9 @@ public class BusinessService {
         if (refundingTicket.getMovieSession().getStartDate().getDate().isEqual(LocalDate.now()) &&
         refundingTicket.getMovieSession().getEndTime().getTime().isBefore(LocalTime.now()))
             return new ApiResponse("Ticket is expired", false);
+        if(refundingTicket.getStatus().equals(Status.REFUNDED))
+            return new ApiResponse("Ticket is already Refunded", false);
 
-        refundingTicket.setStatus(Status.REFUNDED);
-        ticketRepository.save(refundingTicket);
-        return new ApiResponse("Ticket is Refunded", true);
+        return paymentService.refundTicket(refundingTicket);
     }
 }

@@ -11,6 +11,7 @@ import uz.pdp.cinemaroomrestfullservice.entity.userPack.User;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import java.time.LocalDate;
 import java.util.Date;
 
 @EqualsAndHashCode(callSuper = true)
@@ -26,10 +27,12 @@ public class PurchaseHistory extends AbsEntity {
     @OneToOne
     private Ticket ticket;
 
-    private Date date;
+    private LocalDate date;
 
-    @ManyToOne
-    private PayType payType;
+    private String paymentIntentId;
+
+//    @ManyToOne
+//    private PayType payType;
 
 
 }

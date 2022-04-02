@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import uz.pdp.cinemaroomrestfullservice.entity.administrationPack.PayType;
 import uz.pdp.cinemaroomrestfullservice.entity.cinemaPack.Hall;
 import uz.pdp.cinemaroomrestfullservice.entity.cinemaPack.PriceCategory;
 import uz.pdp.cinemaroomrestfullservice.entity.cinemaPack.Row;
@@ -30,6 +31,7 @@ import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.Mo
 import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.MovieSessionRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.SessionDateRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.sessionRelatedRepositories.SessionTimeRepository;
+import uz.pdp.cinemaroomrestfullservice.repository.ticketRelatedRepositories.PayTypeRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.userRelatedRepositories.CartRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.userRelatedRepositories.RoleRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.userRelatedRepositories.UserRepository;
@@ -81,6 +83,8 @@ public class DataLoader implements CommandLineRunner {
     PasswordEncoder passwordEncoder;
     @Autowired
     RoleRepository roleRepository;
+    @Autowired
+    PayTypeRepository payTypeRepository;
 
 
     @Override
@@ -163,6 +167,8 @@ public class DataLoader implements CommandLineRunner {
 
         cartRepository.save(new Cart(admin1));
         cartRepository.save(new Cart(user1));
+
+        payTypeRepository.save(new PayType("Stripe", 3));
 
     }
 

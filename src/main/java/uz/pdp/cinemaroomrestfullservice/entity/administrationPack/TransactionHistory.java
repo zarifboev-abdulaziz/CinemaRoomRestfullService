@@ -8,31 +8,32 @@ import uz.pdp.cinemaroomrestfullservice.entity.template.AbsEntity;
 import uz.pdp.cinemaroomrestfullservice.entity.ticketPack.Ticket;
 import uz.pdp.cinemaroomrestfullservice.entity.userPack.User;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Date;
+import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "purchase_history")
-public class PurchaseHistory extends AbsEntity {
-
-    @ManyToOne
-    private User user;
-
-    @OneToOne
-    private Ticket ticket;
-
-    private LocalDate date;
-
-    private String paymentIntentId;
+@Entity(name = "transaction_history")
+public class TransactionHistory extends AbsEntity {
 
 //    @ManyToOne
-//    private PayType payType;
+//    private User user;
+
+    @ManyToMany
+    @JoinTable(name = "transaction_histories_tickets",
+    joinColumns = @JoinColumn(name = "transaction_id"),
+    inverseJoinColumns = @JoinColumn(name = "ticket_id"))
+    private List<Ticket> ticketList;
+
+    private Double amount;
+    private boolean isRefunded;
+    private String paymentIntentId;
+
+    @ManyToOne
+    private PayType payType;
 
 
 }

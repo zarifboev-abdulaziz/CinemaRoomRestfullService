@@ -18,6 +18,7 @@ import uz.pdp.cinemaroomrestfullservice.service.cinemaRelatedServices.SeatServic
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -85,14 +86,14 @@ public class BusinessProcessController {
     }
 
     @GetMapping("/purchased-tickets")
-    public HttpEntity<?> showPurchaseTickets(){
+    public HttpEntity<?> showTransactionTickets(){
         ApiResponse apiResponse = businessService.showPurchasedTickets();
         return ResponseEntity.status(apiResponse.isSuccess()? 200 : 409).body(apiResponse);
     }
 
-    @GetMapping("/refund-ticket/{ticketId}")
-    public HttpEntity<?> refundTicket(@PathVariable Long ticketId){
-        ApiResponse apiResponse = businessService.refundTicket(ticketId);
+    @PostMapping("/refund-ticket")
+    public HttpEntity<?> refundTicket(@RequestBody List<Long> ticketIds){
+        ApiResponse apiResponse = businessService.refundTicket(ticketIds);
         return ResponseEntity.status(apiResponse.isSuccess()? 200 : 409).body(apiResponse);
     }
 

@@ -9,33 +9,46 @@ import com.stripe.net.Webhook;
 import com.stripe.param.RefundCreateParams;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import uz.pdp.cinemaroomrestfullservice.entity.administrationPack.PurchaseHistory;
+import uz.pdp.cinemaroomrestfullservice.entity.administrationPack.PayType;
+import uz.pdp.cinemaroomrestfullservice.entity.administrationPack.TransactionHistory;
 import uz.pdp.cinemaroomrestfullservice.entity.moviePack.Attachment;
 import uz.pdp.cinemaroomrestfullservice.entity.ticketPack.Status;
 import uz.pdp.cinemaroomrestfullservice.entity.ticketPack.Ticket;
 import uz.pdp.cinemaroomrestfullservice.entity.userPack.Cart;
-import uz.pdp.cinemaroomrestfullservice.repository.ticketRelatedRepositories.PurchaseHistoryRepository;
+import uz.pdp.cinemaroomrestfullservice.repository.ticketRelatedRepositories.PayTypeRepository;
+import uz.pdp.cinemaroomrestfullservice.repository.ticketRelatedRepositories.TransactionHistoryRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.ticketRelatedRepositories.TicketRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.userRelatedRepositories.CartRepository;
 import uz.pdp.cinemaroomrestfullservice.service.MovieRelatedServices.AttachmentService;
+import uz.pdp.cinemaroomrestfullservice.service.TicketService;
+import uz.pdp.cinemaroomrestfullservice.service.paymentService.PaymentService;
 
 import javax.servlet.http.HttpServletResponse;
-import java.time.LocalDate;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-public class PaymentController {
+public class StripeEventController {
     @Autowired
     CartRepository cartRepository;
     @Autowired
+    PaymentService paymentService;
+    @Autowired
     TicketRepository ticketRepository;
     @Autowired
-    AttachmentService attachmentService;
+    TransactionHistoryRepository transactionHistoryRepository;
     @Autowired
-    PurchaseHistoryRepository purchaseHistoryRepository;
+    TicketService ticketService;
+
+
+    @Value("${WEBHOOK_KEY}")
+    private String webhookKey;
+    @Value("${STRIPE_API_KEY}")
+    private String stripeApiKey;
 
     @RequestMapping("/success")
     public ModelAndView successStripePayment() {
@@ -55,7 +68,7 @@ public class PaymentController {
     @SneakyThrows
     @PostMapping("/webhook")
     public ModelAndView handle(@RequestBody String payload, @RequestHeader(name = "Stripe-Signature") String signHeader, HttpServletResponse response) {
-        String endpointSecret = "whsec_59b81b2d55d461995b4a89e7c5efb3a22939b7b35fa7887996223d767dd53850";
+        String endpointSecret = webhookKey;
 //      to activate:  stripe listen --forward-to localhost:8080/webhook
         Event event = Webhook.constructEvent(payload, signHeader, endpointSecret);
 
@@ -70,13 +83,13 @@ public class PaymentController {
                 return null;
             }
 
-            Stripe.apiKey  = "sk_test_51KhGluF5Mulp2zlyc2wbTOrZndoEBbYHoA7KP4OvtwNWLafbxmlclI0rnezQROqSt1trn5W0M0gfWoHBZ97YZIVq00HglCsGnl";
+            Stripe.apiKey = stripeApiKey;
 
             RefundCreateParams params =
                     RefundCreateParams
                             .builder()
                             .setPaymentIntent(session.getPaymentIntent())
-                            .setAmount(session.getAmountTotal())
+                            .setAmount((long) ((session.getAmountTotal() - 0.3) / (1 + 0.029)))
                             .build();
 
             Refund refund = Refund.create(params);
@@ -85,17 +98,10 @@ public class PaymentController {
         return null;
     }
 
-    @SneakyThrows
-    private void fulfillOrder(Cart cart, List<Ticket> allByCartIdAndStatus, String paymentIntent) {
-        for (Ticket ticket : allByCartIdAndStatus) {
-            ticket.setStatus(Status.PURCHASED);
-            Attachment attachment = attachmentService.generateTicketPdf(ticket, cart);
-            ticket.setQrCode(attachment);
-            ticketRepository.save(ticket);
-
-            purchaseHistoryRepository.save(new PurchaseHistory(cart.getUser(), ticket, LocalDate.now(), paymentIntent));
-        }
-
+    @Transactional
+    public void fulfillOrder(Cart cart, List<Ticket> ticketList, String paymentIntent) {
+        ticketService.changeTicketStatus(ticketList, cart, Status.PURCHASED);
+        paymentService.addTransactionHistory(ticketList, paymentIntent, false);
     }
 
 

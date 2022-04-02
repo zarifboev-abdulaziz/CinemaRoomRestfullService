@@ -2,10 +2,8 @@ package uz.pdp.cinemaroomrestfullservice.service.business;
 
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uz.pdp.cinemaroomrestfullservice.entity.cinemaPack.Seat;
-import uz.pdp.cinemaroomrestfullservice.entity.moviePack.Attachment;
 import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.MovieAnnouncement;
 import uz.pdp.cinemaroomrestfullservice.entity.movieSessionPack.MovieSession;
 import uz.pdp.cinemaroomrestfullservice.entity.ticketPack.Status;
@@ -77,7 +75,7 @@ public class BusinessService {
         );
         System.out.println(ticketDto);
         setTimer(optionalCart.get().getId(), savedTicket.getId());
-        return new ApiResponse("Successfully Added to cart, You have 30 minutes to purchase!", true, ticketDto);
+        return new ApiResponse("Successfully Added to cart, You have 30 minutes to transaction!", true, ticketDto);
     }
 
 
@@ -94,7 +92,7 @@ public class BusinessService {
         };
 
         Timer timer = new Timer();
-        timer.schedule(timerTask,50000);
+        timer.schedule(timerTask,60000 * 5);
     }
 
     public ApiResponse showMyCart() {
@@ -218,24 +216,29 @@ public class BusinessService {
         return new ApiResponse("ok", true, ticketDtoList);
     }
 
-    public ApiResponse refundTicket(Long ticketId) {
+    public ApiResponse refundTicket(List<Long> ticketIds) {
         Optional<Cart> optionalCart = cartRepository.findByUserId(1L);
         if (!optionalCart.isPresent())
             return new ApiResponse("User Cart not found", false);
 
-        Optional<Ticket> optionalTicket = ticketRepository.findByIdAndCartId(ticketId, optionalCart.get().getId());
-        if (!optionalTicket.isPresent())
-            return new ApiResponse("Ticket not found", false);
+        List<Ticket> ticketList = new ArrayList<>();
+        for (Long ticketId : ticketIds) {
+            Optional<Ticket> optionalTicket = ticketRepository.findByIdAndCartId(ticketId, optionalCart.get().getId());
+            if (!optionalTicket.isPresent())
+                return new ApiResponse("Ticket not found", false);
 
-        Ticket refundingTicket = optionalTicket.get();
-        if (refundingTicket.getMovieSession().getStartDate().getDate().isBefore(LocalDate.now()))
-            return new ApiResponse("Ticket is expired", false);
-        if (refundingTicket.getMovieSession().getStartDate().getDate().isEqual(LocalDate.now()) &&
-        refundingTicket.getMovieSession().getEndTime().getTime().isBefore(LocalTime.now()))
-            return new ApiResponse("Ticket is expired", false);
-        if(refundingTicket.getStatus().equals(Status.REFUNDED))
-            return new ApiResponse("Ticket is already Refunded", false);
+            Ticket refundingTicket = optionalTicket.get();
+            if (refundingTicket.getMovieSession().getStartDate().getDate().isBefore(LocalDate.now()))
+                return new ApiResponse("Ticket is expired", false);
+            if (refundingTicket.getMovieSession().getStartDate().getDate().isEqual(LocalDate.now()) &&
+                    refundingTicket.getMovieSession().getEndTime().getTime().isBefore(LocalTime.now()))
+                return new ApiResponse("Ticket is expired", false);
+            if(refundingTicket.getStatus().equals(Status.REFUNDED))
+                return new ApiResponse("Ticket is already Refunded", false);
 
-        return paymentService.refundTicket(refundingTicket);
+            ticketList.add(refundingTicket);
+        }
+
+        return paymentService.refundTicket(ticketList, optionalCart.get());
     }
 }

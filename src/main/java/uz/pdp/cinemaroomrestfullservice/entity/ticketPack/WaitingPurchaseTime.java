@@ -12,9 +12,8 @@ import javax.persistence.Entity;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "waiting_purchase_time")
+@Entity(name = "waiting_transaction_time")
 public class WaitingPurchaseTime extends AbsEntity {
-
     private int minute;
 
 }

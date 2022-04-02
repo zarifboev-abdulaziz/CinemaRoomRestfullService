@@ -62,7 +62,7 @@ public class GenerateDocument {
         table.addCell("ClothName");
         table.addCell("Cloth price");
         table.addCell("Cloth quantity");
-        table.addCell("Purchase time");
+        table.addCell("Transaction time");
         Gson gson = new Gson();
 
 

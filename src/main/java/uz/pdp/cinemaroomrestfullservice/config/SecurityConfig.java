@@ -1,5 +1,7 @@
 package uz.pdp.cinemaroomrestfullservice.config;
 
+import freemarker.cache.ClassTemplateLoader;
+import freemarker.cache.TemplateLoader;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +19,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
+import uz.pdp.cinemaroomrestfullservice.security.CurrentUser;
 import uz.pdp.cinemaroomrestfullservice.security.JwtFilter;
 import uz.pdp.cinemaroomrestfullservice.service.auth.AuthService;
 
@@ -61,27 +65,35 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    PasswordEncoder passwordEncoder(){
+    PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    //    @Bean
+//    JavaMailSender javaMailSender(){
+//        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+//        mailSender.setHost("smtp.gmail.com");
+//        mailSender.setPort(587);
+//
+//        mailSender.setUsername("zarifboev.abdulaziz@gmail.com");
+//        mailSender.setPassword("95010uzb");
+//
+//        Properties properties = mailSender.getJavaMailProperties();
+//        properties.put("mail.transport.protocol", "smtp");
+//        properties.put("mail.smtp.auth", "true");
+//        properties.put("mail.smtp.starttls.enable", "true");
+//        properties.put("mail.debug", "true");
+//        return mailSender;
+//    }
     @Bean
-    JavaMailSender javaMailSender(){
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost("smtp.gmail.com");
-        mailSender.setPort(587);
-
-        mailSender.setUsername("zarifboev.abdulaziz@gmail.com");
-        mailSender.setPassword("95010uzb");
-
-        Properties properties = mailSender.getJavaMailProperties();
-        properties.put("mail.transport.protocol", "smtp");
-        properties.put("mail.smtp.auth", "true");
-        properties.put("mail.smtp.starttls.enable", "true");
-        properties.put("mail.debug", "true");
-        return mailSender;
+    public FreeMarkerConfigurer freemarkerClassLoaderConfig() {
+        freemarker.template.Configuration configuration = new freemarker.template.Configuration(freemarker.template.Configuration.VERSION_2_3_27);
+        TemplateLoader templateLoader = new ClassTemplateLoader(this.getClass(), "/mail-templates");
+        configuration.setTemplateLoader(templateLoader);
+        FreeMarkerConfigurer freeMarkerConfigurer = new FreeMarkerConfigurer();
+        freeMarkerConfigurer.setConfiguration(configuration);
+        return freeMarkerConfigurer;
     }
-
 
 
 }

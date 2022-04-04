@@ -90,9 +90,9 @@ public class AuthService implements UserDetailsService {
             MimeMessageHelper helper =
                     new MimeMessageHelper(mimeMessage, "utf-8");
             helper.setText(buildEmail(userFirstName, link), true);
-            helper.setTo("abdulaziz2000go@gmail.com");
+            helper.setFrom("zarifboev.abdulaziz@gmail.com");
+            helper.setTo(sendingEmail);
             helper.setSubject("Confirm your email");
-            helper.setFrom("hello@amigoscode.com");
             javaMailSender.send(mimeMessage);
 
 

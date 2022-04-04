@@ -12,18 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import uz.pdp.cinemaroomrestfullservice.entity.administrationPack.PayType;
-import uz.pdp.cinemaroomrestfullservice.entity.administrationPack.TransactionHistory;
-import uz.pdp.cinemaroomrestfullservice.entity.moviePack.Attachment;
 import uz.pdp.cinemaroomrestfullservice.entity.ticketPack.Status;
 import uz.pdp.cinemaroomrestfullservice.entity.ticketPack.Ticket;
 import uz.pdp.cinemaroomrestfullservice.entity.userPack.Cart;
-import uz.pdp.cinemaroomrestfullservice.repository.ticketRelatedRepositories.PayTypeRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.ticketRelatedRepositories.TransactionHistoryRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.ticketRelatedRepositories.TicketRepository;
 import uz.pdp.cinemaroomrestfullservice.repository.userRelatedRepositories.CartRepository;
-import uz.pdp.cinemaroomrestfullservice.service.MovieRelatedServices.AttachmentService;
 import uz.pdp.cinemaroomrestfullservice.service.TicketService;
+import uz.pdp.cinemaroomrestfullservice.service.business.EmailService;
 import uz.pdp.cinemaroomrestfullservice.service.paymentService.PaymentService;
 
 import javax.servlet.http.HttpServletResponse;
@@ -43,7 +39,8 @@ public class StripeEventController {
     TransactionHistoryRepository transactionHistoryRepository;
     @Autowired
     TicketService ticketService;
-
+    @Autowired
+    EmailService emailService;
 
     @Value("${WEBHOOK_KEY}")
     private String webhookKey;
@@ -79,9 +76,10 @@ public class StripeEventController {
             Optional<Cart> optionalCart = cartRepository.findById(Long.valueOf(session.getClientReferenceId()));
             List<Ticket> allByCartIdAndStatus = ticketRepository.findAllByCartIdAndStatus(optionalCart.get().getId(), Status.NEW);
             if (allByCartIdAndStatus.size() != 0){
-                fulfillOrder(optionalCart.get(), allByCartIdAndStatus, session.getPaymentIntent());
+                fulfillOrder(optionalCart.get(), allByCartIdAndStatus, session.getPaymentIntent(), session.getCustomerDetails().getEmail());
                 return null;
             }
+
 
             Stripe.apiKey = stripeApiKey;
 
@@ -99,9 +97,10 @@ public class StripeEventController {
     }
 
     @Transactional
-    public void fulfillOrder(Cart cart, List<Ticket> ticketList, String paymentIntent) {
+    public void fulfillOrder(Cart cart, List<Ticket> ticketList, String paymentIntent, String customerEmail) {
         ticketService.changeTicketStatus(ticketList, cart, Status.PURCHASED);
         paymentService.addTransactionHistory(ticketList, paymentIntent, false);
+        emailService.sendMessageToUser(ticketList, customerEmail);
     }
 
 
